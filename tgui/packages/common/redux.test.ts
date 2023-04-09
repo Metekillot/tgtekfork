@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import {
   Action,
   Reducer,
@@ -6,6 +7,9 @@ import {
   createAction,
   createStore,
 } from './redux';
+=======
+import { Action, Reducer, applyMiddleware, combineReducers, createAction, createStore } from './redux';
+>>>>>>> c23793d71e4 (Refactors some core tgui components to typescript (#74547))
 
 // Dummy Reducer
 const counterReducer: Reducer<number, Action<string>> = (state = 0, action) => {
@@ -38,7 +42,11 @@ describe('Redux implementation tests', () => {
   test('createStore with applyMiddleware works', () => {
     const store = createStore(
       counterReducer,
+<<<<<<< HEAD
       applyMiddleware(loggingMiddleware),
+=======
+      applyMiddleware(loggingMiddleware)
+>>>>>>> c23793d71e4 (Refactors some core tgui components to typescript (#74547))
     );
     expect(store.getState()).toBe(0);
   });

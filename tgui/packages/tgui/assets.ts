@@ -9,7 +9,11 @@ import { Action, AnyAction, Middleware } from '../common/redux';
 import { Dispatch } from 'common/redux';
 
 const EXCLUDED_PATTERNS = [/v4shim/i];
+<<<<<<< HEAD
 export const loadedMappings: Record<string, string> = {};
+=======
+const loadedMappings: Record<string, string> = {};
+>>>>>>> c23793d71e4 (Refactors some core tgui components to typescript (#74547))
 
 export const resolveAsset = (name: string): string =>
   loadedMappings[name] || name;

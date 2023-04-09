@@ -6,7 +6,11 @@
 
 export type Reducer<State = any, ActionType extends Action = AnyAction> = (
   state: State | undefined,
+<<<<<<< HEAD
   action: ActionType,
+=======
+  action: ActionType
+>>>>>>> c23793d71e4 (Refactors some core tgui components to typescript (#74547))
 ) => State;
 
 export type Store<State = any, ActionType extends Action = AnyAction> = {
@@ -21,7 +25,11 @@ type MiddlewareAPI<State = any, ActionType extends Action = AnyAction> = {
 };
 
 export type Middleware = <State = any, ActionType extends Action = AnyAction>(
+<<<<<<< HEAD
   storeApi: MiddlewareAPI<State, ActionType>,
+=======
+  storeApi: MiddlewareAPI<State, ActionType>
+>>>>>>> c23793d71e4 (Refactors some core tgui components to typescript (#74547))
 ) => (next: Dispatch<ActionType>) => Dispatch<ActionType>;
 
 export type Action<TType = any> = {
@@ -33,7 +41,11 @@ export type AnyAction = Action & {
 };
 
 export type Dispatch<ActionType extends Action = AnyAction> = (
+<<<<<<< HEAD
   action: ActionType,
+=======
+  action: ActionType
+>>>>>>> c23793d71e4 (Refactors some core tgui components to typescript (#74547))
 ) => void;
 
 type StoreEnhancer = (createStoreFunction: Function) => Function;
@@ -48,7 +60,11 @@ type PreparedAction = {
  */
 export const createStore = <State, ActionType extends Action = AnyAction>(
   reducer: Reducer<State, ActionType>,
+<<<<<<< HEAD
   enhancer?: StoreEnhancer,
+=======
+  enhancer?: StoreEnhancer
+>>>>>>> c23793d71e4 (Refactors some core tgui components to typescript (#74547))
 ): Store<State, ActionType> => {
   // Apply a store enhancer (applyMiddleware is one of them).
   if (enhancer) {
@@ -90,14 +106,22 @@ export const applyMiddleware = (
   ...middlewares: Middleware[]
 ): StoreEnhancer => {
   return (
+<<<<<<< HEAD
     createStoreFunction: (reducer: Reducer, enhancer?: StoreEnhancer) => Store,
+=======
+    createStoreFunction: (reducer: Reducer, enhancer?: StoreEnhancer) => Store
+>>>>>>> c23793d71e4 (Refactors some core tgui components to typescript (#74547))
   ) => {
     return (reducer, ...args): Store => {
       const store = createStoreFunction(reducer, ...args);
 
       let dispatch: Dispatch = () => {
         throw new Error(
+<<<<<<< HEAD
           'Dispatching while constructing your middleware is not allowed.',
+=======
+          'Dispatching while constructing your middleware is not allowed.'
+>>>>>>> c23793d71e4 (Refactors some core tgui components to typescript (#74547))
         );
       };
 
@@ -109,7 +133,11 @@ export const applyMiddleware = (
       const chain = middlewares.map((middleware) => middleware(storeApi));
       dispatch = chain.reduceRight(
         (next, middleware) => middleware(next),
+<<<<<<< HEAD
         store.dispatch,
+=======
+        store.dispatch
+>>>>>>> c23793d71e4 (Refactors some core tgui components to typescript (#74547))
       );
 
       return {
@@ -129,7 +157,11 @@ export const applyMiddleware = (
  * is also more flexible than the redux counterpart.
  */
 export const combineReducers = (
+<<<<<<< HEAD
   reducersObj: Record<string, Reducer>,
+=======
+  reducersObj: Record<string, Reducer>
+>>>>>>> c23793d71e4 (Refactors some core tgui components to typescript (#74547))
 ): Reducer => {
   const keys = Object.keys(reducersObj);
 
@@ -170,7 +202,11 @@ export const combineReducers = (
  */
 export const createAction = <TAction extends string>(
   type: TAction,
+<<<<<<< HEAD
   prepare?: (...args: any[]) => PreparedAction,
+=======
+  prepare?: (...args: any[]) => PreparedAction
+>>>>>>> c23793d71e4 (Refactors some core tgui components to typescript (#74547))
 ) => {
   const actionCreator = (...args: any[]) => {
     let action: Action<TAction> & PreparedAction = { type };
@@ -201,11 +237,16 @@ export const createAction = <TAction extends string>(
 export const useDispatch = <TAction extends Action = AnyAction>(context: {
   store: Store<unknown, TAction>;
 }): Dispatch<TAction> => {
+<<<<<<< HEAD
   return context?.store?.dispatch;
+=======
+  return context.store.dispatch;
+>>>>>>> c23793d71e4 (Refactors some core tgui components to typescript (#74547))
 };
 
 export const useSelector = <State, Selected>(
   context: { store: Store<State, Action> },
+<<<<<<< HEAD
   selector: (state: State) => Selected,
 ): Selected => {
   if (!context) {
@@ -213,4 +254,9 @@ export const useSelector = <State, Selected>(
   }
 
   return selector(context?.store?.getState());
+=======
+  selector: (state: State) => Selected
+): Selected => {
+  return selector(context.store.getState());
+>>>>>>> c23793d71e4 (Refactors some core tgui components to typescript (#74547))
 };

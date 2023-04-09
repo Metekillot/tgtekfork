@@ -4,6 +4,7 @@
  * @license MIT
  */
 
+<<<<<<< HEAD
 import {
   Middleware,
   Reducer,
@@ -12,6 +13,9 @@ import {
   combineReducers,
   createStore,
 } from 'common/redux';
+=======
+import { Middleware, Reducer, Store, applyMiddleware, combineReducers, createStore } from 'common/redux';
+>>>>>>> c23793d71e4 (Refactors some core tgui components to typescript (#74547))
 import { backendMiddleware, backendReducer } from './backend';
 import { debugMiddleware, debugReducer, relayMiddleware } from './debug';
 
@@ -51,11 +55,19 @@ export const configureStore = (options: ConfigureStoreOptions = {}): Store => {
   const middlewares: Middleware[] = !sideEffects
     ? []
     : [
+<<<<<<< HEAD
         ...(middleware?.pre || []),
         assetMiddleware,
         backendMiddleware,
         ...(middleware?.post || []),
       ];
+=======
+      ...(middleware?.pre || []),
+      assetMiddleware,
+      backendMiddleware,
+      ...(middleware?.post || []),
+    ];
+>>>>>>> c23793d71e4 (Refactors some core tgui components to typescript (#74547))
 
   if (process.env.NODE_ENV !== 'production') {
     // We are using two if statements because Webpack is capable of
@@ -79,7 +91,11 @@ const loggingMiddleware: Middleware = (store) => (next) => (action) => {
   const { type } = action;
   logger.debug(
     'action',
+<<<<<<< HEAD
     type === 'update' || type === 'backend/update' ? { type } : action,
+=======
+    type === 'update' || type === 'backend/update' ? { type } : action
+>>>>>>> c23793d71e4 (Refactors some core tgui components to typescript (#74547))
   );
   return next(action);
 };
