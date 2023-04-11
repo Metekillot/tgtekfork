@@ -2,8 +2,13 @@ import { Button, LabeledList, NumberInput, Section } from '../components';
 
 import { BooleanLike } from 'common/react';
 import { Window } from '../layouts';
+<<<<<<< HEAD
 import { useBackend } from '../backend';
 import { getGasLabel } from '../constants';
+=======
+import { getGasLabel } from '../constants';
+import { useBackend } from '../backend';
+>>>>>>> d17dc10f74f (Converts core tgui to ts (#74638))
 
 type Data = {
   filter_types: Filter[];
@@ -15,6 +20,10 @@ type Data = {
 type Filter = {
   enabled: BooleanLike;
   gas_id: string;
+<<<<<<< HEAD
+=======
+  gas_name: string;
+>>>>>>> d17dc10f74f (Converts core tgui to ts (#74638))
 };
 
 export const AtmosFilter = (props) => {

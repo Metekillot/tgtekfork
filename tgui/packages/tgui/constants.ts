@@ -144,11 +144,14 @@ export const RADIO_CHANNELS = [
     freq: 1459,
     color: '#1ecc43',
   },
+<<<<<<< HEAD
   {
     name: 'Radio',
     freq: 1443,
     color: '#FFC0CB',
   },
+=======
+>>>>>>> d17dc10f74f (Converts core tgui to ts (#74638))
 ] as const;
 
 const GASES = [
@@ -292,6 +295,7 @@ const GASES = [
     label: 'Anti-Noblium',
     color: 'maroon',
   },
+<<<<<<< HEAD
   {
     id: 'nitrium',
     path: '/datum/gas/nitrium',
@@ -299,10 +303,13 @@ const GASES = [
     label: 'Nitrium',
     color: 'brown',
   },
+=======
+>>>>>>> d17dc10f74f (Converts core tgui to ts (#74638))
 ] as const;
 
 // Returns gas label based on gasId
 export const getGasLabel = (gasId: string, fallbackValue?: string) => {
+<<<<<<< HEAD
   if (!gasId) return fallbackValue || 'None';
 
   const gasSearchString = gasId.toLowerCase();
@@ -314,10 +321,19 @@ export const getGasLabel = (gasId: string, fallbackValue?: string) => {
   }
 
   return fallbackValue || 'None';
+=======
+  const gasSearchString = gasId.toLowerCase();
+  const gas = GASES.find(
+    (gas) =>
+      gas.id === gasSearchString || gas.name.toLowerCase() === gasSearchString
+  );
+  return gas?.label || fallbackValue || gasId;
+>>>>>>> d17dc10f74f (Converts core tgui to ts (#74638))
 };
 
 // Returns gas color based on gasId
 export const getGasColor = (gasId: string) => {
+<<<<<<< HEAD
   if (!gasId) return 'black';
 
   const gasSearchString = gasId.toLowerCase();
@@ -329,10 +345,19 @@ export const getGasColor = (gasId: string) => {
   }
 
   return 'black';
+=======
+  const gasSearchString = gasId.toLowerCase();
+  const gas = GASES.find(
+    (gas) =>
+      gas.id === gasSearchString || gas.name.toLowerCase() === gasSearchString
+  );
+  return gas?.color;
+>>>>>>> d17dc10f74f (Converts core tgui to ts (#74638))
 };
 
 // Returns gas object based on gasId
 export const getGasFromId = (gasId: string): Gas | undefined => {
+<<<<<<< HEAD
   if (!gasId) return;
 
   const gasSearchString = gasId.toLowerCase();
@@ -342,10 +367,19 @@ export const getGasFromId = (gasId: string): Gas | undefined => {
       return GASES[idx];
     }
   }
+=======
+  const gasSearchString = gasId.toLowerCase();
+  const gas = GASES.find(
+    (gas) =>
+      gas.id === gasSearchString || gas.name.toLowerCase() === gasSearchString
+  );
+  return gas;
+>>>>>>> d17dc10f74f (Converts core tgui to ts (#74638))
 };
 
 // Returns gas object based on gasPath
 export const getGasFromPath = (gasPath: string): Gas | undefined => {
+<<<<<<< HEAD
   if (!gasPath) return;
 
   for (let idx = 0; idx < GASES.length; idx++) {
@@ -353,4 +387,7 @@ export const getGasFromPath = (gasPath: string): Gas | undefined => {
       return GASES[idx];
     }
   }
+=======
+  return GASES.find((gas) => gas.path === gasPath);
+>>>>>>> d17dc10f74f (Converts core tgui to ts (#74638))
 };

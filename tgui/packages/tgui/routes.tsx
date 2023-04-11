@@ -4,11 +4,19 @@
  * @license MIT
  */
 
+<<<<<<< HEAD
+=======
+import { Icon, Section, Stack } from './components';
+
+>>>>>>> d17dc10f74f (Converts core tgui to ts (#74638))
 import { Store } from 'common/redux';
 import { Window } from './layouts';
 import { selectBackend } from './backend';
 import { selectDebug } from './debug/selectors';
+<<<<<<< HEAD
 import { LoadingScreen } from './interfaces/common/LoadingToolbox';
+=======
+>>>>>>> d17dc10f74f (Converts core tgui to ts (#74638))
 
 const requireInterface = require.context('./interfaces');
 
@@ -72,10 +80,15 @@ export const getRoutedComponent = (store: Store) => {
   const name = config?.interface;
   const interfacePathBuilders = [
     (name: string) => `./${name}.tsx`,
+<<<<<<< HEAD
     (name: string) => `./${name}.jsx`,
     (name: string) => `./${name}.js`,
     (name: string) => `./${name}/index.tsx`,
     (name: string) => `./${name}/index.jsx`,
+=======
+    (name: string) => `./${name}.js`,
+    (name: string) => `./${name}/index.tsx`,
+>>>>>>> d17dc10f74f (Converts core tgui to ts (#74638))
     (name: string) => `./${name}/index.js`,
   ];
   let esModule;

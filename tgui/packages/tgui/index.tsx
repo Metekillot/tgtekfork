@@ -35,13 +35,21 @@ import './styles/themes/generic.scss';
 
 import { configureStore } from './store';
 
+<<<<<<< HEAD
+=======
+import { StoreProvider, configureStore } from './store';
+
+>>>>>>> d17dc10f74f (Converts core tgui to ts (#74638))
 import { captureExternalLinks } from './links';
 import { createRenderer } from './renderer';
 import { perf } from 'common/perf';
 import { setupGlobalEvents } from './events';
 import { setupHotKeys } from './hotkeys';
 import { setupHotReloading } from 'tgui-dev-server/link/client.cjs';
+<<<<<<< HEAD
 import { setGlobalStore } from './backend';
+=======
+>>>>>>> d17dc10f74f (Converts core tgui to ts (#74638))
 
 perf.mark('inception', window.performance?.timing?.navigationStart);
 perf.mark('init');

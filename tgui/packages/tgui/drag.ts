@@ -76,7 +76,11 @@ const getScreenSize = (): [number, number] => [
 export const touchRecents = (
   recents: string[],
   touchedItem: string,
+<<<<<<< HEAD
   limit = 50,
+=======
+  limit = 50
+>>>>>>> d17dc10f74f (Converts core tgui to ts (#74638))
 ): [string[], string | undefined] => {
   const nextRecents: string[] = [touchedItem];
   let trimmedItem: string | undefined;
@@ -120,7 +124,11 @@ export const recallWindowGeometry = async (
     pos?: [number, number];
     size?: [number, number];
     locked?: boolean;
+<<<<<<< HEAD
   } = {},
+=======
+  } = {}
+>>>>>>> d17dc10f74f (Converts core tgui to ts (#74638))
 ) => {
   const geometry = options.fancy && (await storage.get(windowKey));
   if (geometry) {
@@ -182,7 +190,11 @@ export const setupDrag = async () => {
  */
 const constraintPosition = (
   pos: [number, number],
+<<<<<<< HEAD
   size: [number, number],
+=======
+  size: [number, number]
+>>>>>>> d17dc10f74f (Converts core tgui to ts (#74638))
 ): [boolean, [number, number]] => {
   const screenPos = getScreenPosition();
   const screenSize = getScreenSize();
@@ -246,7 +258,11 @@ export const resizeStartHandler =
     resizing = true;
     dragPointOffset = vecSubtract(
       [event.screenX, event.screenY],
+<<<<<<< HEAD
       getWindowPosition(),
+=======
+      getWindowPosition()
+>>>>>>> d17dc10f74f (Converts core tgui to ts (#74638))
     );
     initialSize = getWindowSize();
     // Focus click target

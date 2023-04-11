@@ -14,7 +14,11 @@ export const globalEvents = new EventEmitter();
 let ignoreWindowFocus = false;
 
 export const setupGlobalEvents = (
+<<<<<<< HEAD
   options: { ignoreWindowFocus?: boolean } = {},
+=======
+  options: { ignoreWindowFocus?: boolean } = {}
+>>>>>>> d17dc10f74f (Converts core tgui to ts (#74638))
 ): void => {
   ignoreWindowFocus = !!options.ignoreWindowFocus;
 };

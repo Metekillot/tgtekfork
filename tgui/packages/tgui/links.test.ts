@@ -17,7 +17,11 @@ describe('captureExternalLinks', () => {
   it('should subscribe to document clicks', () => {
     expect(addEventListenerSpy).toHaveBeenCalledWith(
       'click',
+<<<<<<< HEAD
       expect.any(Function),
+=======
+      expect.any(Function)
+>>>>>>> d17dc10f74f (Converts core tgui to ts (#74638))
     );
   });
 

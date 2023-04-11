@@ -1,9 +1,13 @@
+<<<<<<< HEAD
 import {
   getGasColor,
   getGasFromId,
   getGasFromPath,
   getGasLabel,
 } from './constants';
+=======
+import { getGasColor, getGasFromId, getGasFromPath, getGasLabel } from './constants';
+>>>>>>> d17dc10f74f (Converts core tgui to ts (#74638))
 
 describe('gas helper functions', () => {
   it('should get the proper gas label', () => {
@@ -19,11 +23,19 @@ describe('gas helper functions', () => {
     expect(gasLabel).toBe('fallback');
   });
 
+<<<<<<< HEAD
   it('should return none if no gas and no fallback is found', () => {
     const gasId = 'nonexistent';
     const gasLabel = getGasLabel(gasId);
 
     expect(gasLabel).toBe('None');
+=======
+  it('should return the id if no gas and no fallback is found', () => {
+    const gasId = 'nonexistent';
+    const gasLabel = getGasLabel(gasId);
+
+    expect(gasLabel).toBe('nonexistent');
+>>>>>>> d17dc10f74f (Converts core tgui to ts (#74638))
   });
 
   it('should get the proper gas color', () => {
@@ -33,11 +45,19 @@ describe('gas helper functions', () => {
     expect(gasColor).toBe('maroon');
   });
 
+<<<<<<< HEAD
   it('should return a string if no gas is found', () => {
     const gasId = 'nonexistent';
     const gasColor = getGasColor(gasId);
 
     expect(gasColor).toBe('black');
+=======
+  it('should return undefined if no gas is found', () => {
+    const gasId = 'nonexistent';
+    const gasColor = getGasColor(gasId);
+
+    expect(gasColor).toBeUndefined();
+>>>>>>> d17dc10f74f (Converts core tgui to ts (#74638))
   });
 
   it('should return the gas object if found', () => {

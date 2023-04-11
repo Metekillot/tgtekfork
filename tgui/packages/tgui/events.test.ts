@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import {
   KeyEvent,
   addScrollableNode,
@@ -5,6 +6,9 @@ import {
   removeScrollableNode,
   setupGlobalEvents,
 } from './events';
+=======
+import { KeyEvent, addScrollableNode, canStealFocus, removeScrollableNode, setupGlobalEvents } from './events';
+>>>>>>> d17dc10f74f (Converts core tgui to ts (#74638))
 
 describe('focusEvents', () => {
   afterEach(() => {
