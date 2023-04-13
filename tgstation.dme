@@ -5479,8 +5479,11 @@
 #include "code\modules\tgui\states\zlevel.dm"
 #include "code\modules\tgui_input\alert.dm"
 #include "code\modules\tgui_input\checkboxes.dm"
+<<<<<<< HEAD
 #include "code\modules\tgui_input\color.dm"
 #include "code\modules\tgui_input\keycombo.dm"
+=======
+>>>>>>> 1499fcd2723 (Tgui input checkboxes (#74544))
 #include "code\modules\tgui_input\list.dm"
 #include "code\modules\tgui_input\number.dm"
 #include "code\modules\tgui_input\text.dm"

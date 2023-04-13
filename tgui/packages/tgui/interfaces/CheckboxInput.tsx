@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import {
   Button,
   Icon,
@@ -8,6 +9,9 @@ import {
   Table,
   Tooltip,
 } from '../components';
+=======
+import { Button, Icon, Input, NoticeBox, Section, Stack, Table, Tooltip } from '../components';
+>>>>>>> 1499fcd2723 (Tgui input checkboxes (#74544))
 import { TableCell, TableRow } from '../components/Table';
 import { createSearch, decodeHtmlEntities } from 'common/string';
 import { useBackend, useLocalState } from '../backend';
@@ -21,11 +25,15 @@ type Data = {
   message: string;
   title: string;
   timeout: number;
+<<<<<<< HEAD
   min_checked: number;
+=======
+>>>>>>> 1499fcd2723 (Tgui input checkboxes (#74544))
   max_checked: number;
 };
 
 /** Renders a list of checkboxes per items for input. */
+<<<<<<< HEAD
 export const CheckboxInput = (props) => {
   const { data } = useBackend<Data>();
   const {
@@ -42,6 +50,22 @@ export const CheckboxInput = (props) => {
   const [searchQuery, setSearchQuery] = useLocalState<string>(
     'searchQuery',
     '',
+=======
+export const CheckboxInput = (props, context) => {
+  const { data } = useBackend<Data>(context);
+  const { items = [], max_checked, message, timeout, title } = data;
+
+  const [selections, setSelections] = useLocalState<string[]>(
+    context,
+    'selections',
+    []
+  );
+
+  const [searchQuery, setSearchQuery] = useLocalState<string>(
+    context,
+    'searchQuery',
+    ''
+>>>>>>> 1499fcd2723 (Tgui input checkboxes (#74544))
   );
   const search = createSearch(searchQuery, (item: string) => item);
   const toDisplay = items.filter(search);
@@ -62,7 +86,10 @@ export const CheckboxInput = (props) => {
           <Stack.Item>
             <NoticeBox info textAlign="center">
               {decodeHtmlEntities(message)}{' '}
+<<<<<<< HEAD
               {min_checked > 0 && ` (Min: ${min_checked})`}
+=======
+>>>>>>> 1499fcd2723 (Tgui input checkboxes (#74544))
               {max_checked < 50 && ` (Max: ${max_checked})`}
             </NoticeBox>
           </Stack.Item>
@@ -79,8 +106,12 @@ export const CheckboxInput = (props) => {
                           !selections.includes(item)
                         }
                         fluid
+<<<<<<< HEAD
                         onClick={() => selectItem(item)}
                       >
+=======
+                        onClick={() => selectItem(item)}>
+>>>>>>> 1499fcd2723 (Tgui input checkboxes (#74544))
                         {item}
                       </Button.Checkbox>
                     </TableCell>
