@@ -3,6 +3,7 @@ import { flow } from 'common/fp';
 import { BooleanLike, classes } from 'common/react';
 import { createSearch } from 'common/string';
 import { useBackend, useLocalState } from '../backend';
+<<<<<<< HEAD
 import {
   Button,
   ByondUi,
@@ -18,12 +19,25 @@ type Data = {
   cameras: Camera[];
   can_spy: BooleanLike;
   mapRef: string;
+=======
+import { Button, ByondUi, Input, NoticeBox, Section, Stack } from '../components';
+import { Window } from '../layouts';
+
+type Data = {
+  can_spy: BooleanLike;
+  mapRef: string;
+  cameras: Camera[];
+  activeCamera: Camera & { status: BooleanLike };
+>>>>>>> d1dde8c510d (Typescript camera console (#78412))
   network: string[];
 };
 
 type Camera = {
   name: string;
+<<<<<<< HEAD
   ref: string;
+=======
+>>>>>>> d1dde8c510d (Typescript camera console (#78412))
 };
 
 /**
@@ -32,6 +46,7 @@ type Camera = {
  */
 const prevNextCamera = (
   cameras: Camera[],
+<<<<<<< HEAD
   activeCamera: Camera & { status: BooleanLike },
 ) => {
   if (!activeCamera || cameras.length < 2) {
@@ -58,6 +73,17 @@ const prevNextCamera = (
       // Middle camera
       return [cameras[index - 1].ref, cameras[index + 1].ref];
   }
+=======
+  activeCamera: Camera & { status: BooleanLike }
+) => {
+  if (!activeCamera) {
+    return [];
+  }
+  const index = cameras.findIndex(
+    (camera) => camera?.name === activeCamera.name
+  );
+  return [cameras[index - 1]?.name, cameras[index + 1]?.name];
+>>>>>>> d1dde8c510d (Typescript camera console (#78412))
 };
 
 /**
@@ -69,6 +95,7 @@ const selectCameras = (cameras: Camera[], searchText = ''): Camera[] => {
   const testSearch = createSearch(searchText, (camera: Camera) => camera.name);
 
   return flow([
+<<<<<<< HEAD
     filter((camera: Camera) => !!camera.name),
     // Optional search term
     searchText && filter(testSearch),
@@ -78,6 +105,18 @@ const selectCameras = (cameras: Camera[], searchText = ''): Camera[] => {
 };
 
 export const CameraConsole = (props) => {
+=======
+    // Null camera filter
+    filter((camera: Camera) => !!camera?.name),
+    // Optional search term
+    searchText && filter(testSearch),
+    // Slightly expensive, but way better than sorting in BYOND
+    sortBy((camera: Camera) => camera.name),
+  ])(cameras);
+};
+
+export const CameraConsole = (props, context) => {
+>>>>>>> d1dde8c510d (Typescript camera console (#78412))
   return (
     <Window width={850} height={708}>
       <Window.Content>
@@ -87,7 +126,11 @@ export const CameraConsole = (props) => {
   );
 };
 
+<<<<<<< HEAD
 export const CameraContent = (props) => {
+=======
+export const CameraContent = (props, context) => {
+>>>>>>> d1dde8c510d (Typescript camera console (#78412))
   return (
     <Stack fill>
       <Stack.Item grow>
@@ -100,9 +143,15 @@ export const CameraContent = (props) => {
   );
 };
 
+<<<<<<< HEAD
 const CameraSelector = (props) => {
   const { act, data } = useBackend<Data>();
   const [searchText, setSearchText] = useLocalState('searchText', '');
+=======
+const CameraSelector = (props, context) => {
+  const { act, data } = useBackend<Data>(context);
+  const [searchText, setSearchText] = useLocalState(context, 'searchText', '');
+>>>>>>> d1dde8c510d (Typescript camera console (#78412))
   const { activeCamera } = data;
   const cameras = selectCameras(data.cameras, searchText);
 
@@ -123,13 +172,21 @@ const CameraSelector = (props) => {
             // We're not using the component here because performance
             // would be absolutely abysmal (50+ ms for each re-render).
             <div
+<<<<<<< HEAD
               key={camera.ref}
               title={camera.name}
               className={classes([
+=======
+              key={camera.name}
+              title={camera.name}
+              className={classes([
+                'candystripe',
+>>>>>>> d1dde8c510d (Typescript camera console (#78412))
                 'Button',
                 'Button--fluid',
                 'Button--color--transparent',
                 'Button--ellipsis',
+<<<<<<< HEAD
                 activeCamera?.ref === camera.ref
                   ? 'Button--selected'
                   : 'candystripe',
@@ -140,6 +197,17 @@ const CameraSelector = (props) => {
                 })
               }
             >
+=======
+                activeCamera &&
+                  camera.name === activeCamera.name &&
+                  'Button--selected',
+              ])}
+              onClick={() =>
+                act('switch_camera', {
+                  name: camera.name,
+                })
+              }>
+>>>>>>> d1dde8c510d (Typescript camera console (#78412))
               {camera.name}
             </div>
           ))}
@@ -149,6 +217,7 @@ const CameraSelector = (props) => {
   );
 };
 
+<<<<<<< HEAD
 const CameraControls = (props) => {
   const { act, data } = useBackend<Data>();
   const { activeCamera, can_spy, mapRef } = data;
@@ -157,6 +226,17 @@ const CameraControls = (props) => {
   const cameras = selectCameras(data.cameras, searchText);
 
   const [prevCamera, nextCamera] = prevNextCamera(cameras, activeCamera);
+=======
+const CameraControls = (props, context) => {
+  const { act, data } = useBackend<Data>(context);
+  const { activeCamera, can_spy, mapRef } = data;
+  const cameras = selectCameras(data.cameras);
+
+  const [prevCameraName, nextCameraName] = prevNextCamera(
+    cameras,
+    activeCamera
+  );
+>>>>>>> d1dde8c510d (Typescript camera console (#78412))
 
   return (
     <Section fill>
@@ -164,7 +244,11 @@ const CameraControls = (props) => {
         <Stack.Item>
           <Stack fill>
             <Stack.Item grow>
+<<<<<<< HEAD
               {activeCamera?.status ? (
+=======
+              {activeCamera?.name ? (
+>>>>>>> d1dde8c510d (Typescript camera console (#78412))
                 <NoticeBox info>{activeCamera.name}</NoticeBox>
               ) : (
                 <NoticeBox danger>No input signal</NoticeBox>
@@ -184,10 +268,17 @@ const CameraControls = (props) => {
             <Stack.Item>
               <Button
                 icon="chevron-left"
+<<<<<<< HEAD
                 disabled={!prevCamera}
                 onClick={() =>
                   act('switch_camera', {
                     camera: prevCamera,
+=======
+                disabled={!prevCameraName}
+                onClick={() =>
+                  act('switch_camera', {
+                    name: prevCameraName,
+>>>>>>> d1dde8c510d (Typescript camera console (#78412))
                   })
                 }
               />
@@ -196,10 +287,17 @@ const CameraControls = (props) => {
             <Stack.Item>
               <Button
                 icon="chevron-right"
+<<<<<<< HEAD
                 disabled={!nextCamera}
                 onClick={() =>
                   act('switch_camera', {
                     camera: nextCamera,
+=======
+                disabled={!nextCameraName}
+                onClick={() =>
+                  act('switch_camera', {
+                    name: nextCameraName,
+>>>>>>> d1dde8c510d (Typescript camera console (#78412))
                   })
                 }
               />
