@@ -24,11 +24,16 @@ import { Button, ByondUi, Input, NoticeBox, Section, Stack } from '../components
 import { Window } from '../layouts';
 
 type Data = {
+  activeCamera: Camera & { status: BooleanLike };
+  cameras: Camera[];
   can_spy: BooleanLike;
   mapRef: string;
+<<<<<<< HEAD
   cameras: Camera[];
   activeCamera: Camera & { status: BooleanLike };
 >>>>>>> d1dde8c510d (Typescript camera console (#78412))
+=======
+>>>>>>> c4a57f76580 (Camera UI fixes (#78855))
   network: string[];
 };
 
@@ -79,11 +84,25 @@ const prevNextCamera = (
   if (!activeCamera) {
     return [];
   }
+<<<<<<< HEAD
   const index = cameras.findIndex(
     (camera) => camera?.name === activeCamera.name
   );
   return [cameras[index - 1]?.name, cameras[index + 1]?.name];
 >>>>>>> d1dde8c510d (Typescript camera console (#78412))
+=======
+  const index = cameras.findIndex((camera) => camera.ref === activeCamera.ref);
+
+  if (index === 0) {
+    return [cameras[cameras.length - 1].ref, cameras[index + 1].ref];
+  }
+
+  if (index === cameras.length - 1) {
+    return [cameras[index - 1].ref, cameras[0].ref];
+  }
+
+  return [cameras[index - 1].ref, cameras[index + 1].ref];
+>>>>>>> c4a57f76580 (Camera UI fixes (#78855))
 };
 
 /**
@@ -96,6 +115,9 @@ const selectCameras = (cameras: Camera[], searchText = ''): Camera[] => {
 
   return flow([
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c4a57f76580 (Camera UI fixes (#78855))
     filter((camera: Camera) => !!camera.name),
     // Optional search term
     searchText && filter(testSearch),
@@ -176,17 +198,23 @@ const CameraSelector = (props, context) => {
               key={camera.ref}
               title={camera.name}
               className={classes([
+<<<<<<< HEAD
 =======
               key={camera.name}
               title={camera.name}
               className={classes([
                 'candystripe',
 >>>>>>> d1dde8c510d (Typescript camera console (#78412))
+=======
+>>>>>>> c4a57f76580 (Camera UI fixes (#78855))
                 'Button',
                 'Button--fluid',
                 'Button--color--transparent',
                 'Button--ellipsis',
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c4a57f76580 (Camera UI fixes (#78855))
                 activeCamera?.ref === camera.ref
                   ? 'Button--selected'
                   : 'candystripe',
@@ -230,7 +258,9 @@ const CameraControls = (props) => {
 const CameraControls = (props, context) => {
   const { act, data } = useBackend<Data>(context);
   const { activeCamera, can_spy, mapRef } = data;
-  const cameras = selectCameras(data.cameras);
+  const [searchText] = useLocalState(context, 'searchText', '');
+
+  const cameras = selectCameras(data.cameras, searchText);
 
   const [prevCameraName, nextCameraName] = prevNextCamera(
     cameras,
@@ -245,10 +275,14 @@ const CameraControls = (props, context) => {
           <Stack fill>
             <Stack.Item grow>
 <<<<<<< HEAD
+<<<<<<< HEAD
               {activeCamera?.status ? (
 =======
               {activeCamera?.name ? (
 >>>>>>> d1dde8c510d (Typescript camera console (#78412))
+=======
+              {activeCamera?.status ? (
+>>>>>>> c4a57f76580 (Camera UI fixes (#78855))
                 <NoticeBox info>{activeCamera.name}</NoticeBox>
               ) : (
                 <NoticeBox danger>No input signal</NoticeBox>
