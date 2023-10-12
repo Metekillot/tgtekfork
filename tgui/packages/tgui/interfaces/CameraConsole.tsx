@@ -81,9 +81,10 @@ const prevNextCamera = (
 =======
   activeCamera: Camera & { status: BooleanLike }
 ) => {
-  if (!activeCamera) {
+  if (!activeCamera || cameras.length < 2) {
     return [];
   }
+<<<<<<< HEAD
 <<<<<<< HEAD
   const index = cameras.findIndex(
     (camera) => camera?.name === activeCamera.name
@@ -91,18 +92,34 @@ const prevNextCamera = (
   return [cameras[index - 1]?.name, cameras[index + 1]?.name];
 >>>>>>> d1dde8c510d (Typescript camera console (#78412))
 =======
+=======
+
+>>>>>>> d3747254e60 (Fixes camera console bluescreen (#78926))
   const index = cameras.findIndex((camera) => camera.ref === activeCamera.ref);
 
-  if (index === 0) {
-    return [cameras[cameras.length - 1].ref, cameras[index + 1].ref];
-  }
+  switch (index) {
+    case -1: // Current camera is not in the list
+      return [cameras[cameras.length - 1].ref, cameras[0].ref];
 
-  if (index === cameras.length - 1) {
-    return [cameras[index - 1].ref, cameras[0].ref];
-  }
+    case 0: // First camera
+      if (cameras.length === 2) return [cameras[1].ref, cameras[1].ref]; // Only two
 
+<<<<<<< HEAD
   return [cameras[index - 1].ref, cameras[index + 1].ref];
 >>>>>>> c4a57f76580 (Camera UI fixes (#78855))
+=======
+      return [cameras[cameras.length - 1].ref, cameras[index + 1].ref];
+
+    case cameras.length - 1: // Last camera
+      if (cameras.length === 2) return [cameras[0].ref, cameras[0].ref];
+
+      return [cameras[index - 1].ref, cameras[0].ref];
+
+    default:
+      // Middle camera
+      return [cameras[index - 1].ref, cameras[index + 1].ref];
+  }
+>>>>>>> d3747254e60 (Fixes camera console bluescreen (#78926))
 };
 
 /**
