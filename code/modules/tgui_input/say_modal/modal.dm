@@ -70,6 +70,7 @@
 		lightMode = client.prefs?.read_preference(/datum/preference/toggle/tgui_say_light_mode),
 		maxLength = max_length,
 	))
+
 	stop_thinking()
 	return TRUE
 
