@@ -591,6 +591,15 @@
 		return
 
 	if(storage_turf)
+	//Determine if we're so fast and so quick, we pick up the item, and we pick it up slick!
+	//Which is to say, do circumstances allow us to pick up this item without doing animations
+	//or making a noise?
+		//Assume we are obvious by default.
+		#WARN "Finish adding logic for a traitor implant that is Sleight+"
+	        var/fast_hands = FALSE
+		//Make sure our item doesn't have any signalling that says it is ALWAYS stealthy... or perhaps NEVER?
+		var/item_stealth_signal_components = SEND_SIGNAL(src, COMSIG_ITEM_PICKUP_STEALTHY, user)
+		if(SEND_SIGNAL(COMSIG_ITEM_PICKUP_STEALTHY) & COMPONENT_ALWAYS_STEALTHY)
 		do_pickup_animation(user, storage_turf)
 
 	if(throwing)
@@ -600,7 +609,7 @@
 			return
 
 	. = FALSE
-	pickup(user)
+	pickup(user, fast_hands)
 	add_fingerprint(user)
 	if(!user.put_in_active_hand(src, ignore_animation = !outside_storage))
 		user.dropItemToGround(src)
