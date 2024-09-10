@@ -17,7 +17,7 @@
 	var/datum/port/output/trigger_port
 	var/max_range = 7
 
-/obj/item/circuit_component/direction/get_ui_notices()
+/obj/item/circuit_component/point_follower/get_ui_notices()
 	. = ..()
 	. += create_ui_notice("Maximum Range: [max_range] tiles", "orange", "info")
 
@@ -28,7 +28,6 @@
 
 /obj/item/circuit_component/point_follower/register_shell(atom/movable/shell)
 	if(parent.loc != shell)
-		shell.become_hearing_sensitive(CIRCUIT_HEAR_TRAIT)
 		RegisterSignal(shell, COMSIG_MOVABLE_HEAR, PROC_REF(on_shell_hear))
 
 /obj/item/circuit_component/point_follower/input_received/(datum/port/input/port)
