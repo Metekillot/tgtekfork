@@ -133,8 +133,11 @@
 
 /datum/religion_sect/puritanism
 	name = "Nanotrasen Approved God"
-	desc = "Your run-of-the-mill sect, there are no benefits or boons associated."
-	quote = "Nanotrasen Recommends!"
+	desc = "Your run-of-the-mill sect; you're here to satisfy the crew's spiritual needs and to comfort them... even if \
+	it means banishing supernatural beings not of this world! ... er, station. Higher favor makes your bible healing safer \
+	and more effective, and it also serves as a weapon against supernatural entities. As well, the crew are comforted by your\
+	hugs -- even if they dislike being touched -- and your bible blessings dispel negative moods alongside the positive affect they provide!"
+	quote = "Nanotrasen Recommends! High crew morale is positively correlated with increased profit!"
 	tgui_icon = "bible"
 
 /**** Mechanical God ****/

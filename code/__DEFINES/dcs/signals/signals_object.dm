@@ -209,6 +209,9 @@
 #define COMSIG_BIBLE_SMACKED "bible_smacked"
 	///stops the bible chain from continuing. When all of the effects of the bible smacking have been moved to a signal we can kill this
 	#define COMSIG_END_BIBLE_CHAIN (1<<0)
+///from /obj/item/book/bible/interact_with_atom(): sent to the user when they bible smack something, for either
+///affecting them or affecting what they smacked
+#define COMSIG_DOING_BIBLE_SMACK "doing_bible_smack"
 ///Closets
 ///From base of [/obj/structure/closet/proc/insert]: (atom/movable/inserted)
 #define COMSIG_CLOSET_INSERT "closet_insert"
