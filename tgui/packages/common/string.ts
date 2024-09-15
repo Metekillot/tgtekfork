@@ -1,10 +1,4 @@
 /**
- * @file
- * @copyright 2020 Aleksej Komarov
- * @license MIT
- */
-
-/**
  * Creates a search terms matcher. Returns true if given string matches the search text.
  *
  * @example
@@ -37,6 +31,44 @@ export function createSearch<TObj>(
     }
     return str.toLowerCase().includes(preparedSearchText);
   };
+}
+
+export const VOWELS = ['a', 'e', 'i', 'o', 'u'];
+
+/**
+ * Pluralizes a word based on the number given.
+ * Handles -es and -ies.
+ *
+ * @param override - A custom string to be appended instead for plurals. Useful for words that don't follow the standard rules.
+ *
+ * @example
+ * ```tsx
+ * pluralize('Dog', 1) // Dog
+ * pluralize('Dog', 2) // Dogs
+ * pluralize('Monarch', 2, "s") // Monarchs
+ * ```
+ */
+export function pluralize(str: string, n: number, override?: string) {
+  if (n === 1) {
+    return str;
+  } else if (override) {
+    return str + override;
+  } else if (
+    str.endsWith('s') ||
+    str.endsWith('x') ||
+    str.endsWith('z') ||
+    str.endsWith('ch') ||
+    str.endsWith('sh')
+  ) {
+    return str + 'es';
+  } else if (
+    str.endsWith('y') &&
+    !VOWELS.includes(str.charAt(str.length - 2))
+  ) {
+    return str.slice(0, -1) + 'ies';
+  } else {
+    return str + 's';
+  }
 }
 
 /**
@@ -117,12 +149,12 @@ export function toTitleCase(str: string): string {
     return capitalize(str);
   });
 
-  for (let word of WORDS_LOWER) {
+  for (const word of WORDS_LOWER) {
     const regex = new RegExp('\\s' + word + '\\s', 'g');
     currentStr = currentStr.replace(regex, (str) => str.toLowerCase());
   }
 
-  for (let word of WORDS_UPPER) {
+  for (const word of WORDS_UPPER) {
     const regex = new RegExp('\\b' + word + '\\b', 'g');
     currentStr = currentStr.replace(regex, (str) => str.toLowerCase());
   }
@@ -130,7 +162,6 @@ export function toTitleCase(str: string): string {
   return currentStr;
 }
 
-const TRANSLATE_REGEX = /&(nbsp|amp|quot|lt|gt|apos);/g;
 const TRANSLATIONS = {
   amp: '&',
   apos: "'",
@@ -158,14 +189,17 @@ export function decodeHtmlEntities(str: string): string {
       .replace(/<br>/gi, '\n')
       .replace(/<\/?[a-z0-9-_]+[^>]*>/gi, '')
       // Basic entities
-      .replace(TRANSLATE_REGEX, (match, entity) => TRANSLATIONS[entity])
+      .replace(
+        /&(nbsp|amp|quot|lt|gt|apos);/g,
+        (_match, entity) => TRANSLATIONS[entity],
+      )
       // Decimal entities
-      .replace(/&#?([0-9]+);/gi, (match, numStr) => {
+      .replace(/&#?([0-9]+);/gi, (_match, numStr) => {
         const num = parseInt(numStr, 10);
         return String.fromCharCode(num);
       })
       // Hex entities
-      .replace(/&#x?([0-9a-f]+);/gi, (match, numStr) => {
+      .replace(/&#x?([0-9a-f]+);/gi, (_match, numStr) => {
         const num = parseInt(numStr, 16);
         return String.fromCharCode(num);
       })

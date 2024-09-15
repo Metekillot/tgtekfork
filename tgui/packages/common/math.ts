@@ -1,76 +1,54 @@
 /**
- * @file
- * @copyright 2020 Aleksej Komarov
- * @license MIT
- */
-
-/**
  * Limits a number to the range between 'min' and 'max'.
  */
-export const clamp = (value, min, max) => {
+export function clamp(value: number, min: number, max: number): number {
   return value < min ? min : value > max ? max : value;
-};
+}
 
 /**
  * Limits a number between 0 and 1.
  */
-export const clamp01 = (value) => {
+export function clamp01(value: number): number {
   return value < 0 ? 0 : value > 1 ? 1 : value;
-};
+}
 
 /**
  * Scales a number to fit into the range between min and max.
  */
-export const scale = (value, min, max) => {
+export function scale(value: number, min = 0, max = 100): number {
   return (value - min) / (max - min);
-};
+}
 
 /**
- * Robust number rounding.
+ * Robust number rounding, similar to PHP's round() function.
  *
- * Adapted from Locutus, see: http://locutus.io/php/math/round/
- *
- * @param  {number} value
- * @param  {number} precision
- * @return {number}
+ * @url https://stackoverflow.com/questions/53450248/how-to-round-in-javascript-like-php-do/54721202#54721202
  */
-export const round = (value, precision) => {
-  if (!value || isNaN(value)) {
-    return value;
-  }
-  // helper variables
-  let m, f, isHalf, sgn;
-  // making sure precision is integer
-  precision |= 0;
-  m = Math.pow(10, precision);
-  value *= m;
-  // sign of the number
-  sgn = +(value > 0) | -(value < 0);
-  // isHalf = value % 1 === 0.5 * sgn;
-  isHalf = Math.abs(value % 1) >= 0.4999999999854481;
-  f = Math.floor(value);
-  if (isHalf) {
-    // rounds .5 away from zero
-    value = f + (sgn > 0);
-  }
-  return (isHalf ? value : Math.round(value)) / m;
-};
+export function round(num: number, dec: number): number {
+  const num_sign = num >= 0 ? 1 : -1;
+  return parseFloat(
+    (
+      Math.round(num * Math.pow(10, dec) + num_sign * 0.0001) /
+      Math.pow(10, dec)
+    ).toFixed(dec),
+  );
+}
 
 /**
  * Returns a string representing a number in fixed point notation.
  */
-export const toFixed = (value, fractionDigits = 0) => {
+export function toFixed(value: number, fractionDigits = 0): string {
   return Number(value).toFixed(Math.max(fractionDigits, 0));
-};
+}
 
 /**
  * Checks whether a value is within the provided range.
  *
  * Range is an array of two numbers, for example: [0, 15].
  */
-export const inRange = (value, range) => {
+export function inRange(value: number, range: number[]): boolean {
   return range && value >= range[0] && value <= range[1];
-};
+}
 
 /**
  * Walks over the object with ranges, comparing value against every range,
@@ -78,21 +56,24 @@ export const inRange = (value, range) => {
  *
  * Range is an array of two numbers, for example: [0, 15].
  */
-export const keyOfMatchingRange = (value, ranges) => {
-  for (let rangeName of Object.keys(ranges)) {
+export function keyOfMatchingRange(
+  value: number,
+  ranges: Record<string, any>,
+): string | undefined {
+  for (const rangeName of Object.keys(ranges)) {
     const range = ranges[rangeName];
     if (inRange(value, range)) {
       return rangeName;
     }
   }
-};
+}
 
 /**
  * Get number of digits following the decimal point in a number
  */
-export const numberOfDecimalDigits = (value) => {
+export function numberOfDecimalDigits(value: number): number {
   if (Math.floor(value) !== value) {
     return value.toString().split('.')[1].length || 0;
   }
   return 0;
-};
+}

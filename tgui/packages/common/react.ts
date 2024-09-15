@@ -1,13 +1,7 @@
 /**
- * @file
- * @copyright 2020 Aleksej Komarov
- * @license MIT
- */
-
-/**
  * Helper for conditionally adding/removing classes in React
  */
-export const classes = (classNames: (string | BooleanLike)[]) => {
+export function classes(classNames: (string | BooleanLike)[]): string {
   let className = '';
   for (let i = 0; i < classNames.length; i++) {
     const part = classNames[i];
@@ -16,13 +10,13 @@ export const classes = (classNames: (string | BooleanLike)[]) => {
     }
   }
   return className;
-};
+}
 
 /**
  * Normalizes children prop, so that it is always an array of VDom
  * elements.
  */
-export const normalizeChildren = <T>(children: T | T[]) => {
+export function normalizeChildren<T>(children: T | T[]): T[] {
   if (Array.isArray(children)) {
     return children.flat().filter((value) => value) as T[];
   }
@@ -30,14 +24,17 @@ export const normalizeChildren = <T>(children: T | T[]) => {
     return [children];
   }
   return [];
-};
+}
 
 /**
  * Shallowly checks if two objects are different.
  * Credit: https://github.com/developit/preact-compat
  */
-export const shallowDiffers = (a: object, b: object) => {
-  let i;
+export function shallowDiffers(
+  a: Record<string, any>,
+  b: Record<string, any>,
+): boolean {
+  let i: string;
   for (i in a) {
     if (!(i in b)) {
       return true;
@@ -49,7 +46,7 @@ export const shallowDiffers = (a: object, b: object) => {
     }
   }
   return false;
-};
+}
 
 /**
  * A common case in tgui, when you pass a value conditionally, these are
@@ -60,9 +57,6 @@ export type BooleanLike = number | boolean | null | undefined;
 /**
  * A helper to determine whether the object is renderable by React.
  */
-export const canRender = (value: unknown) => {
-  // prettier-ignore
-  return value !== undefined
-    && value !== null
-    && typeof value !== 'boolean';
-};
+export function canRender(value: unknown): boolean {
+  return value !== undefined && value !== null && typeof value !== 'boolean';
+}
