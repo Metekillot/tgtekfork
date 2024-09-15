@@ -1,15 +1,9 @@
-/**
- * @file
- * @copyright 2020 Aleksej Komarov
- * @license MIT
- */
-
 type Gas = {
-  id: string;
-  path: string;
-  name: string;
-  label: string;
   color: string;
+  id: string;
+  label: string;
+  name: string;
+  path: string;
 };
 
 // UI states, which are mirrored from the BYOND code.
@@ -301,7 +295,7 @@ const GASES = [
 ] as const;
 
 // Returns gas label based on gasId
-export const getGasLabel = (gasId: string, fallbackValue?: string) => {
+export function getGasLabel(gasId: string, fallbackValue?: string): string {
   if (!gasId) return fallbackValue || 'None';
 
   const gasSearchString = gasId.toLowerCase();
@@ -313,10 +307,10 @@ export const getGasLabel = (gasId: string, fallbackValue?: string) => {
   }
 
   return fallbackValue || 'None';
-};
+}
 
 // Returns gas color based on gasId
-export const getGasColor = (gasId: string) => {
+export function getGasColor(gasId: string): string {
   if (!gasId) return 'black';
 
   const gasSearchString = gasId.toLowerCase();
@@ -328,7 +322,7 @@ export const getGasColor = (gasId: string) => {
   }
 
   return 'black';
-};
+}
 
 // Returns gas object based on gasId
 export const getGasFromId = (gasId: string): Gas | undefined => {

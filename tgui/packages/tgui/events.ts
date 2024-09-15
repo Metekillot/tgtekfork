@@ -1,13 +1,44 @@
-/**
- * Normalized browser focus events and BYOND-specific focus helpers.
- *
- * @file
- * @copyright 2020 Aleksej Komarov
- * @license MIT
- */
+import { KEY_ALT, KEY_CTRL, KEY_F1, KEY_F12, KEY_SHIFT } from './keycodes';
 
-import { EventEmitter } from 'common/events';
-import { KEY_ALT, KEY_CTRL, KEY_F1, KEY_F12, KEY_SHIFT } from 'common/keycodes';
+type Fn = (...args: any[]) => void;
+
+export class EventEmitter {
+  private listeners: Record<string, Fn[]>;
+
+  constructor() {
+    this.listeners = {};
+  }
+
+  on(name: string, listener: Fn): void {
+    this.listeners[name] = this.listeners[name] || [];
+    this.listeners[name].push(listener);
+  }
+
+  off(name: string, listener: Fn): void {
+    const listeners = this.listeners[name];
+    if (!listeners) {
+      throw new Error(`There is no listeners for "${name}"`);
+    }
+    this.listeners[name] = listeners.filter((existingListener) => {
+      return existingListener !== listener;
+    });
+  }
+
+  emit(name: string, ...params: any[]): void {
+    const listeners = this.listeners[name];
+    if (!listeners) {
+      return;
+    }
+    for (let i = 0, len = listeners.length; i < len; i += 1) {
+      const listener = listeners[i];
+      listener(...params);
+    }
+  }
+
+  clear(): void {
+    this.listeners = {};
+  }
+}
 
 export const globalEvents = new EventEmitter();
 let ignoreWindowFocus = false;
@@ -25,7 +56,7 @@ let windowFocusTimeout: ReturnType<typeof setTimeout> | null;
 let windowFocused = true;
 
 // Pretend to always be in focus.
-const setWindowFocus = (value: boolean, delayed?: boolean) => {
+function setWindowFocus(value: boolean, delayed?: boolean) {
   if (ignoreWindowFocus) {
     windowFocused = true;
     return;
@@ -43,30 +74,30 @@ const setWindowFocus = (value: boolean, delayed?: boolean) => {
     globalEvents.emit(value ? 'window-focus' : 'window-blur');
     globalEvents.emit('window-focus-change', value);
   }
-};
+}
 
 // Focus stealing
 // --------------------------------------------------------
 
 let focusStolenBy: HTMLElement | null = null;
 
-export const canStealFocus = (node: HTMLElement) => {
+export function canStealFocus(node: HTMLElement) {
   const tag = String(node.tagName).toLowerCase();
   return tag === 'input' || tag === 'textarea';
-};
+}
 
-const stealFocus = (node: HTMLElement) => {
+function stealFocus(node: HTMLElement) {
   releaseStolenFocus();
   focusStolenBy = node;
   focusStolenBy.addEventListener('blur', releaseStolenFocus);
-};
+}
 
-const releaseStolenFocus = () => {
+function releaseStolenFocus() {
   if (focusStolenBy) {
     focusStolenBy.removeEventListener('blur', releaseStolenFocus);
     focusStolenBy = null;
   }
-};
+}
 
 // Focus follows the mouse
 // --------------------------------------------------------
@@ -75,18 +106,18 @@ let focusedNode: HTMLElement | null = null;
 let lastVisitedNode: HTMLElement | null = null;
 const trackedNodes: HTMLElement[] = [];
 
-export const addScrollableNode = (node: HTMLElement) => {
+export function addScrollableNode(node: HTMLElement) {
   trackedNodes.push(node);
-};
+}
 
-export const removeScrollableNode = (node: HTMLElement) => {
+export function removeScrollableNode(node: HTMLElement) {
   const index = trackedNodes.indexOf(node);
   if (index >= 0) {
     trackedNodes.splice(index, 1);
   }
-};
+}
 
-const focusNearestTrackedParent = (node: HTMLElement | null) => {
+function focusNearestTrackedParent(node: HTMLElement | null) {
   if (focusStolenBy || !windowFocused) {
     return;
   }
@@ -103,7 +134,7 @@ const focusNearestTrackedParent = (node: HTMLElement | null) => {
     }
     node = node.parentElement;
   }
-};
+}
 
 window.addEventListener('mousemove', (e) => {
   const node = e.target as HTMLElement;
@@ -125,17 +156,17 @@ window.addEventListener('focusin', (e) => {
   }
 });
 
-window.addEventListener('focusout', (e) => {
+window.addEventListener('focusout', () => {
   lastVisitedNode = null;
   setWindowFocus(false, true);
 });
 
-window.addEventListener('blur', (e) => {
+window.addEventListener('blur', () => {
   lastVisitedNode = null;
   setWindowFocus(false, true);
 });
 
-window.addEventListener('beforeunload', (e) => {
+window.addEventListener('beforeunload', () => {
   setWindowFocus(false);
 });
 
