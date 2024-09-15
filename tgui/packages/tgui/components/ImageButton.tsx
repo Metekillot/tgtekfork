@@ -7,7 +7,7 @@
 import { Placement } from '@popperjs/core';
 import { ReactNode } from 'react';
 
-import { BooleanLike, classes } from '../common/react';
+import { BooleanLike, classes } from 'common/react';
 import styles from '../styles/components/ImageButton.module.scss';
 import { BoxProps, computeBoxProps } from './Box';
 import { DmIcon } from './DmIcon';
@@ -21,14 +21,14 @@ type Props = Partial<{
   asset: string[];
   /** Classic way to put images. Example: `base64={thing.image}` */
   base64: string;
-  /** 
+  /**
    * Special container for buttons.
    * You can put any other component here.
    * Has some special stylings!
-   * Example: `buttons={<Button>Send</Button>}` 
+   * Example: `buttons={<Button>Send</Button>}`
    */
   buttons: ReactNode;
-  /** 
+  /**
    * Enables alternate layout for `buttons` container.
    * Without fluid, buttons will be on top and with `pointer-events: none`, useful for text info.
    * With fluid, buttons will be in "hamburger" style.
@@ -48,9 +48,9 @@ type Props = Partial<{
   dmIcon: string | null;
   /** Parameter `icon_state` of component `DmIcon`. */
   dmIconState: string | null;
-  /** 
+  /**
    * Changes the layout of the button, making it fill the entire horizontally available space.
-   * Allows the use of `title` 
+   * Allows the use of `title`
    */
   fluid: boolean;
   /** Parameter responsible for the size of the image, component and standard "stubs". */
@@ -141,7 +141,7 @@ export function ImageButton(props: Props) {
       <div className={classes([styles.image])}>
         {base64 || asset || imageSrc ? (
           <Image
-            className={classes(!base64 && !imageSrc && asset || [])}
+            className={classes((!base64 && !imageSrc && asset) || [])}
             src={base64 ? `data:image/png;base64,${base64}` : imageSrc}
             height={`${imageSize}px`}
             width={`${imageSize}px`}

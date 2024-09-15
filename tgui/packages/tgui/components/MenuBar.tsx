@@ -5,7 +5,7 @@
  */
 import { Component, createRef, ReactNode, RefObject } from 'react';
 
-import { classes } from '../common/react';
+import { classes } from 'common/react';
 import styles from '../styles/components/MenuBar.module.scss';
 import { Box } from './Box';
 import { Icon } from './Icon';

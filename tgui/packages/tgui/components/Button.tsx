@@ -9,8 +9,8 @@ import {
   useState,
 } from 'react';
 
-import { isEscape, KEY } from '../common/keys';
-import { BooleanLike, classes } from '../common/react';
+import { isEscape, KEY } from 'common/keys';
+import { BooleanLike, classes } from 'common/react';
 import styles from '../styles/components/Button.module.scss';
 import { Box, BoxProps, computeBoxClassName, computeBoxProps } from './Box';
 import { Icon } from './Icon';
@@ -57,7 +57,7 @@ type Props = Partial<{
   /** Icon rotation */
   iconRotation: number;
   /** Icon size */
-  iconSize: number
+  iconSize: number;
   /** Makes the icon spin */
   iconSpin: BooleanLike;
   /** Called when element is clicked */

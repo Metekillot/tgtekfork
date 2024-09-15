@@ -1,8 +1,8 @@
 import { KeyboardEvent, SyntheticEvent, useEffect, useRef } from 'react';
 
-import { isEscape, KEY } from '../common/keys';
-import { classes } from '../common/react';
-import { debounce } from '../common/timer';
+import { isEscape, KEY } from 'common/keys';
+import { classes } from 'common/react';
+import { debounce } from 'common/timer';
 import styles from '../styles/components/Input.module.scss';
 import { Box, BoxProps } from './Box';
 

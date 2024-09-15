@@ -1,7 +1,7 @@
 import { ReactNode, useEffect, useRef } from 'react';
 
-import { addScrollableNode, removeScrollableNode } from '../common/events';
-import { canRender, classes } from '../common/react';
+import { addScrollableNode, removeScrollableNode } from 'common/events';
+import { canRender, classes } from 'common/react';
 import styles from '../styles/components/Section.module.scss';
 import { BoxProps, computeBoxClassName, computeBoxProps } from './Box';
 

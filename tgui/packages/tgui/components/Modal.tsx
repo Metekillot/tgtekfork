@@ -1,4 +1,4 @@
-import { classes } from '../common/react';
+import { classes } from 'common/react';
 import styles from '../styles/components/Modal.module.scss';
 import { BoxProps, computeBoxClassName, computeBoxProps } from './Box';
 import { Dimmer } from './Dimmer';

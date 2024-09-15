@@ -5,7 +5,7 @@
  */
 import { RefObject } from 'react';
 
-import { classes } from '../common/react';
+import { classes } from 'common/react';
 import styles from '../styles/components/Stack.module.scss';
 import { computeBoxClassName } from './Box';
 import {

@@ -1,6 +1,6 @@
 import { Component, createRef } from 'react';
 
-import { clamp, toFixed } from '../common/math';
+import { clamp, toFixed } from 'common/math';
 
 type Props = {
   /**

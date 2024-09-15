@@ -8,8 +8,8 @@ import {
 } from 'react';
 import { KeyboardEvent, SyntheticEvent } from 'react';
 
-import { isEscape, KEY } from '../common/keys';
-import { classes } from '../common/react';
+import { isEscape, KEY } from 'common/keys';
+import { classes } from 'common/react';
 import styles from '../styles/components/TextArea.module.scss';
 import { Box, BoxProps } from './Box';
 import { toInputValue } from './Input';

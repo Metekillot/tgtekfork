@@ -1,4 +1,4 @@
-import { clamp } from '../common/math';
+import { clamp } from 'common/math';
 import { Component, createRef } from 'react';
 
 import { AnimatedNumber } from './AnimatedNumber';

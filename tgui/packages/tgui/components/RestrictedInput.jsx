@@ -1,6 +1,6 @@
-import { KEY_ENTER, KEY_ESCAPE } from '../common/keycodes';
-import { clamp } from '../common/math';
-import { classes } from '../common/react';
+import { KEY_ENTER, KEY_ESCAPE } from 'common/keycodes';
+import { clamp } from 'common/math';
+import { classes } from 'common/react';
 import { Component, createRef } from 'react';
 
 import { Box } from './Box';

@@ -1,4 +1,4 @@
-import { classes } from '../common/react';
+import { classes } from 'common/react';
 import styles from '../styles/components/Flex.module.scss';
 import { BoxProps, computeBoxClassName, computeBoxProps, unit } from './Box';
 

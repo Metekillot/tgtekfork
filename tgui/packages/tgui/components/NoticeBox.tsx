@@ -1,4 +1,4 @@
-import { classes } from '../common/react';
+import { classes } from 'common/react';
 import styles from '../styles/components/NoticeBox.module.scss';
 import { Box, BoxProps } from './Box';
 
@@ -21,10 +21,10 @@ type ExclusiveProps =
       /** Green notice */
       success: boolean;
     })
-    | (Omit<None, 'warning'> & {
+  | (Omit<None, 'warning'> & {
       /** Orange notice */
-        warning: boolean;
-      })
+      warning: boolean;
+    })
   | (Omit<None, 'danger'> & {
       /** Red notice */
       danger: boolean;

@@ -1,6 +1,5 @@
+import { formatTime } from 'common/format';
 import { useEffect, useRef, useState } from 'react';
-
-import { formatTime } from '../common/format';
 
 interface TimeDisplayProps {
   /** Whether the TimeDisplay should automatically increment or decrement (plain prop to dec.) */

@@ -1,6 +1,6 @@
 import { CSSProperties, ReactNode } from 'react';
 
-import { BooleanLike, classes } from '../common/react';
+import { BooleanLike, classes } from 'common/react';
 import style from '../styles/components/Icon.module.scss';
 import { BoxProps, computeBoxClassName, computeBoxProps } from './Box';
 

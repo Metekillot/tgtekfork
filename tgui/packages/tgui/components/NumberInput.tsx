@@ -1,3 +1,6 @@
+import { isEscape, KEY } from 'common/keys';
+import { clamp, round } from 'common/math';
+import { BooleanLike, classes } from 'common/react';
 import {
   Component,
   createRef,
@@ -7,9 +10,6 @@ import {
   RefObject,
 } from 'react';
 
-import { isEscape, KEY } from '../common/keys';
-import { clamp, round } from '../common/math';
-import { BooleanLike, classes } from '../common/react';
 import styles from '../styles/components/NumberInput.module.scss';
 import { AnimatedNumber } from './AnimatedNumber';
 import { Box } from './Box';
@@ -135,7 +135,7 @@ export class NumberInput extends Component<Props, State> {
           // Clamp the final value
           {
             state.currentValue = clamp(
-              round(internalValue / step, 0) * step ,
+              round(internalValue / step, 0) * step,
               minValue,
               maxValue,
             );

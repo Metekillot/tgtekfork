@@ -1,4 +1,4 @@
-import { classes } from '../common/react';
+import { classes } from 'common/react';
 import styles from '../styles/components/Divider.module.scss';
 
 type Props = Partial<{

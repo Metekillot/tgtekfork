@@ -1,6 +1,6 @@
 import { PropsWithChildren, ReactNode } from 'react';
 
-import { BooleanLike, classes } from '../common/react';
+import { BooleanLike, classes } from 'common/react';
 import styles from '../styles/components/LabeledList.module.scss';
 import { Box, unit } from './Box';
 import { Divider } from './Divider';

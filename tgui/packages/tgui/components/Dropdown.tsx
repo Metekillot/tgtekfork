@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useRef, useState } from 'react';
 
-import { classes } from '../common/react';
+import { classes } from 'common/react';
 import { BoxProps, unit } from './Box';
 import { Button } from './Button';
 import { Icon } from './Icon';

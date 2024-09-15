@@ -3,8 +3,8 @@
  * @copyright 2020 bobbahbrown (https://github.com/bobbahbrown)
  * @license MIT
  */
-import { clamp01, keyOfMatchingRange, scale } from '../common/math';
-import { classes } from '../common/react';
+import { clamp01, keyOfMatchingRange, scale } from 'common/math';
+import { classes } from 'common/react';
 import styles from '../styles/components/RoundGauge.module.scss';
 import { AnimatedNumber } from './AnimatedNumber';
 import { Box, BoxProps, computeBoxClassName, computeBoxProps } from './Box';

@@ -1,5 +1,5 @@
-import { keyOfMatchingRange, scale } from '../common/math';
-import { BooleanLike, classes } from '../common/react';
+import { keyOfMatchingRange, scale } from 'common/math';
+import { BooleanLike, classes } from 'common/react';
 import styles from '../styles/components/Knob.module.scss';
 import { BoxProps, computeBoxClassName, computeBoxProps } from './Box';
 import { DraggableControl } from './DraggableControl';
