@@ -1,9 +1,3 @@
-/**
- * @file
- * @copyright 2020 Aleksej Komarov
- * @license MIT
- */
-
 export { AnimatedNumber } from './AnimatedNumber';
 export { Autofocus } from './Autofocus';
 export { Blink } from './Blink';
@@ -22,9 +16,9 @@ export { DraggableControl } from './DraggableControl';
 export { Dropdown } from './Dropdown';
 export { FitText } from './FitText';
 export { Flex } from './Flex';
-export { Grid } from './Grid';
 export { Icon } from './Icon';
 export { Image } from './Image';
+export { ImageButton } from './ImageButton';
 export { InfinitePlane } from './InfinitePlane';
 export { Input } from './Input';
 export { KeyListener } from './KeyListener';

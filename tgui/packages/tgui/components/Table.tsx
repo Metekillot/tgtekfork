@@ -1,11 +1,5 @@
-/**
- * @file
- * @copyright 2020 Aleksej Komarov
- * @license MIT
- */
-
-import { classes } from 'common/react';
-
+import { classes } from '../common/react';
+import styles from '../styles/components/Table.module.scss';
 import { BoxProps, computeBoxClassName, computeBoxProps } from './Box';
 
 type Props = Partial<{
@@ -20,8 +14,8 @@ export function Table(props: Props) {
   return (
     <table
       className={classes([
-        'Table',
-        collapsing && 'Table--collapsing',
+        styles.table,
+        collapsing && styles.collapsing,
         className,
         computeBoxClassName(rest),
       ])}
@@ -44,8 +38,8 @@ export function TableRow(props: RowProps) {
   return (
     <tr
       className={classes([
-        'Table__row',
-        header && 'Table__row--header',
+        styles.row,
+        header && styles.row__header,
         className,
         computeBoxClassName(props),
       ])}
@@ -57,11 +51,11 @@ export function TableRow(props: RowProps) {
 Table.Row = TableRow;
 
 type CellProps = Partial<{
+  /** Additional columns for this cell to expand, assuming there is room. */
+  colSpan: number;
   /** Collapses table cell to the smallest possible size,
   and stops any text inside from wrapping. */
   collapsing: boolean;
-  /** Additional columns for this cell to expand, assuming there is room. */
-  colSpan: number;
   /** Whether this is a header cell. */
   header: boolean;
   /** Rows for this cell to expand, assuming there is room. */
@@ -75,9 +69,9 @@ export function TableCell(props: CellProps) {
   return (
     <td
       className={classes([
-        'Table__cell',
-        collapsing && 'Table__cell--collapsing',
-        header && 'Table__cell--header',
+        styles.cell,
+        collapsing && styles.cell__collapsing,
+        header && styles.cell__header,
         className,
         computeBoxClassName(props),
       ])}

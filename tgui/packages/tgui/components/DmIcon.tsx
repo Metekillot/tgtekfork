@@ -1,7 +1,5 @@
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode } from 'react';
 
-import { resolveAsset } from '../assets';
-import { fetchRetry } from '../http';
 import { BoxProps } from './Box';
 import { Image } from './Image';
 
@@ -33,8 +31,6 @@ type Props = {
 }> &
   BoxProps;
 
-let refMap: Record<string, string> | undefined;
-
 export function DmIcon(props: Props) {
   const {
     className,
@@ -47,26 +43,11 @@ export function DmIcon(props: Props) {
     ...rest
   } = props;
 
-  const [iconRef, setIconRef] = useState('');
-
-  const query = `${iconRef}?state=${icon_state}&dir=${direction}&movement=${!!movement}&frame=${frame}`;
-
-  useEffect(() => {
-    async function fetchRefMap() {
-      const response = await fetchRetry(resolveAsset('icon_ref_map.json'));
-      const data = await response.json();
-      refMap = data;
-      setIconRef(data[icon]);
-    }
-
-    if (!refMap) {
-      fetchRefMap();
-    } else {
-      setIconRef(refMap[icon]);
-    }
-  }, []);
+  const iconRef = Byond.iconRefMap?.[icon];
 
   if (!iconRef) return fallback;
+
+  const query = `${iconRef}?state=${icon_state}&dir=${direction}&movement=${!!movement}&frame=${frame}`;
 
   return <Image fixErrors src={query} {...rest} />;
 }

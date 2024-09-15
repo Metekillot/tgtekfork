@@ -1,12 +1,6 @@
-/**
- * @file
- * @copyright 2020 Aleksej Komarov
- * @license MIT
- */
-
-import { keyOfMatchingRange, scale } from 'common/math';
-import { BooleanLike, classes } from 'common/react';
-
+import { keyOfMatchingRange, scale } from '../common/math';
+import { BooleanLike, classes } from '../common/react';
+import styles from '../styles/components/Knob.module.scss';
 import { BoxProps, computeBoxClassName, computeBoxProps } from './Box';
 import { DraggableControl } from './DraggableControl';
 
@@ -42,10 +36,10 @@ type Props = {
   stepPixelSize: number;
   /** A number in milliseconds, for which the input will hold off from updating while events propagate through the backend. Default is about 250ms, increase it if you still see flickering. */
   suppressFlicker: boolean;
-  /** Unit to display to the right of value. */
-  unit: string;
   /** Whether to clamp the value to the range. */
   unclamped: boolean;
+  /** Unit to display to the right of value. */
+  unit: string;
 }> &
   BoxProps;
 
@@ -73,7 +67,6 @@ export function Knob(props: Props) {
     value,
     // Own props
     bipolar,
-    children,
     className,
     color,
     fillValue,
@@ -123,9 +116,9 @@ export function Knob(props: Props) {
         return (
           <div
             className={classes([
-              'Knob',
-              'Knob--color--' + effectiveColor,
-              bipolar && 'Knob--bipolar',
+              styles.knob,
+              styles['color__' + effectiveColor],
+              bipolar && styles.bipolar,
               className,
               computeBoxClassName(rest),
             ])}
@@ -138,31 +131,31 @@ export function Knob(props: Props) {
             })}
             onMouseDown={handleDragStart}
           >
-            <div className="Knob__circle">
+            <div className={styles.circle}>
               <div
-                className="Knob__cursorBox"
+                className={styles.cursorBox}
                 style={{
                   transform: `rotate(${rotation}deg)`,
                 }}
               >
-                <div className="Knob__cursor" />
+                <div className={styles.cursor} />
               </div>
             </div>
             {dragging && (
-              <div className="Knob__popupValue">{displayElement}</div>
+              <div className={styles.popupValue}>{displayElement}</div>
             )}
             <svg
-              className="Knob__ring Knob__ringTrackPivot"
+              className={classes([styles.ring, styles.ringTrackPivot])}
               viewBox="0 0 100 100"
             >
               <circle className="Knob__ringTrack" cx="50" cy="50" r="50" />
             </svg>
             <svg
-              className="Knob__ring Knob__ringFillPivot"
+              className={classes([styles.ring, styles.ringFillPivot])}
               viewBox="0 0 100 100"
             >
               <circle
-                className="Knob__ringFill"
+                className={styles.ringFill}
                 style={{
                   strokeDashoffset: Math.max(
                     ((bipolar ? 2.75 : 2.0) - scaledFillValue * 1.5) *

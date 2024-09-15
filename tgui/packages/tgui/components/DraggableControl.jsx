@@ -1,10 +1,4 @@
-/**
- * @file
- * @copyright 2020 Aleksej Komarov
- * @license MIT
- */
-
-import { clamp } from 'common/math';
+import { clamp } from '../common/math';
 import { Component, createRef } from 'react';
 
 import { AnimatedNumber } from './AnimatedNumber';
@@ -14,9 +8,9 @@ const DEFAULT_UPDATE_RATE = 400;
 /**
  * Reduces screen offset to a single number based on the matrix provided.
  */
-const getScalarScreenOffset = (e, matrix) => {
+function getScalarScreenOffset(e, matrix) {
   return e.screenX * matrix[0] + e.screenY * matrix[1];
-};
+}
 
 export class DraggableControl extends Component {
   constructor(props) {
@@ -79,14 +73,8 @@ export class DraggableControl extends Component {
     };
 
     this.handleDragMove = (e) => {
-      // prettier-ignore
-      const {
-        minValue,
-        maxValue,
-        step,
-        stepPixelSize,
-        dragMatrix,
-      } = this.props;
+      const { minValue, maxValue, step, stepPixelSize, dragMatrix } =
+        this.props;
       this.setState((prevState) => {
         const state = { ...prevState };
         const offset = getScalarScreenOffset(e, dragMatrix) - state.origin;
@@ -137,12 +125,10 @@ export class DraggableControl extends Component {
       } else if (this.inputRef) {
         const input = this.inputRef.current;
         input.value = internalValue;
-        // IE8: Dies when trying to focus a hidden element
-        // (Error: Object does not support this action)
-        try {
+        setTimeout(() => {
           input.focus();
           input.select();
-        } catch {}
+        }, 10);
       }
     };
   }
@@ -174,16 +160,18 @@ export class DraggableControl extends Component {
     if (dragging || suppressingFlicker) {
       displayValue = intermediateValue;
     }
-    // prettier-ignore
+
     const displayElement = (
       <>
-        {
-          (animated && !dragging && !suppressingFlicker) ?
-            (<AnimatedNumber value={displayValue} format={format} />) :
-            (format ? format(displayValue) : displayValue)
-        }
+        {animated && !dragging && !suppressingFlicker ? (
+          <AnimatedNumber value={displayValue} format={format} />
+        ) : format ? (
+          format(displayValue)
+        ) : (
+          displayValue
+        )}
 
-        { (unit ? ' ' + unit : '') }
+        {unit ? ' ' + unit : ''}
       </>
     );
 

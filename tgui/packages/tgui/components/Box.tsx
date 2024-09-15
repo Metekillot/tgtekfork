@@ -1,21 +1,14 @@
-/**
- * @file
- * @copyright 2020 Aleksej Komarov
- * @license MIT
- */
-
-import { BooleanLike, classes } from 'common/react';
 import {
   createElement,
-  DragEventHandler,
+  CSSProperties,
   KeyboardEventHandler,
   MouseEventHandler,
   ReactNode,
   UIEventHandler,
 } from 'react';
 
-import { CSS_COLORS } from '../constants';
-import { logger } from '../logging';
+import { CSS_COLORS } from '../common/constants';
+import { BooleanLike, classes } from '../common/react';
 
 type BooleanProps = Partial<Record<keyof typeof booleanStyleMap, boolean>>;
 type StringProps = Partial<
@@ -29,18 +22,19 @@ export type EventHandlers = Partial<{
   onKeyDown: KeyboardEventHandler<HTMLDivElement>;
   onKeyUp: KeyboardEventHandler<HTMLDivElement>;
   onMouseDown: MouseEventHandler<HTMLDivElement>;
+  onMouseLeave: MouseEventHandler<HTMLDivElement>;
   onMouseMove: MouseEventHandler<HTMLDivElement>;
   onMouseOver: MouseEventHandler<HTMLDivElement>;
   onMouseUp: MouseEventHandler<HTMLDivElement>;
   onScroll: UIEventHandler<HTMLDivElement>;
-  onDrop: DragEventHandler<HTMLDivElement>;
 }>;
 
 export type BoxProps = Partial<{
   as: string;
   children: ReactNode;
   className: string | BooleanLike;
-  style: Partial<CSSStyleDeclaration>;
+  id: string;
+  style: CSSProperties;
 }> &
   BooleanProps &
   StringProps &
@@ -56,7 +50,7 @@ type DangerDoNotUse = {
 /**
  * Coverts our rem-like spacing unit into a CSS unit.
  */
-export const unit = (value: unknown) => {
+export function unit(value: unknown) {
   if (typeof value === 'string') {
     // Transparently convert pixels into rem units
     if (value.endsWith('px')) {
@@ -67,25 +61,27 @@ export const unit = (value: unknown) => {
   if (typeof value === 'number') {
     return value + 'rem';
   }
-};
+}
 
 /**
  * Same as `unit`, but half the size for integers numbers.
  */
-export const halfUnit = (value: unknown) => {
+export function halfUnit(value: unknown): string | undefined {
   if (typeof value === 'string') {
     return unit(value);
   }
   if (typeof value === 'number') {
     return unit(value * 0.5);
   }
-};
+}
 
-const isColorCode = (str: unknown) => !isColorClass(str);
+function isColorCode(str: unknown): boolean {
+  return !isColorClass(str);
+}
 
-const isColorClass = (str: unknown): boolean => {
+function isColorClass(str: unknown): boolean {
   return typeof str === 'string' && CSS_COLORS.includes(str as any);
-};
+}
 
 const mapRawPropTo = (attrName) => (style, value) => {
   if (typeof value === 'number' || typeof value === 'string') {
@@ -108,7 +104,7 @@ const mapBooleanPropTo = (attrName, attrValue) => (style, value) => {
 const mapDirectionalUnitPropTo = (attrName, unit, dirs) => (style, value) => {
   if (typeof value === 'number' || typeof value === 'string') {
     for (let i = 0; i < dirs.length; i++) {
-      style[attrName + '-' + dirs[i]] = unit(value);
+      style[attrName + dirs[i]] = unit(value);
     }
   }
 };
@@ -200,12 +196,12 @@ const booleanStyleMap = {
   preserveWhitespace: mapBooleanPropTo('whiteSpace', 'pre-wrap'),
 } as const;
 
-export const computeBoxProps = (props) => {
+export function computeBoxProps(props): Record<string, any> {
   const computedProps: Record<string, any> = {};
   const computedStyles: Record<string, string | number> = {};
 
   // Compute props
-  for (let propName of Object.keys(props)) {
+  for (const propName of Object.keys(props)) {
     if (propName === 'style') {
       continue;
     }
@@ -226,18 +222,18 @@ export const computeBoxProps = (props) => {
   computedProps.style = { ...computedStyles, ...props.style };
 
   return computedProps;
-};
+}
 
-export const computeBoxClassName = (props: BoxProps) => {
+export function computeBoxClassName(props: BoxProps): string {
   const color = props.textColor || props.color;
   const backgroundColor = props.backgroundColor;
   return classes([
     isColorClass(color) && 'color-' + color,
     isColorClass(backgroundColor) && 'color-bg-' + backgroundColor,
   ]);
-};
+}
 
-export const Box = (props: BoxProps & DangerDoNotUse) => {
+export function Box(props: BoxProps & DangerDoNotUse) {
   const { as = 'div', className, children, ...rest } = props;
 
   // Compute class name and styles
@@ -245,12 +241,6 @@ export const Box = (props: BoxProps & DangerDoNotUse) => {
     ? `${className} ${computeBoxClassName(rest)}`
     : computeBoxClassName(rest);
   const computedProps = computeBoxProps(rest);
-
-  if (as === 'img') {
-    logger.error(
-      'Box component cannot be used as an image. Use Image component instead.',
-    );
-  }
 
   // Render the component
   return createElement(
@@ -261,4 +251,4 @@ export const Box = (props: BoxProps & DangerDoNotUse) => {
     },
     children,
   );
-};
+}

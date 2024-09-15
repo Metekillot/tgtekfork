@@ -1,13 +1,9 @@
-/**
- * @file
- * @copyright 2020 Aleksej Komarov
- * @license MIT
- */
-
-import { clamp01, keyOfMatchingRange, scale } from 'common/math';
-import { classes } from 'common/react';
 import { PropsWithChildren } from 'react';
 
+import { clamp01, keyOfMatchingRange, scale } from '../common/math';
+import { classes } from '../common/react';
+import progStyles from '../styles/components/ProgressBar.module.scss';
+import styles from '../styles/components/Slider.module.scss';
 import { BoxProps, computeBoxClassName, computeBoxProps } from './Box';
 import { DraggableControl } from './DraggableControl';
 
@@ -19,14 +15,14 @@ type Props = {
   /** Value itself, controls the position of the cursor. */
   value: number;
 } & Partial<{
-  /** Allows to disable the slider */
-  disabled: boolean;
   /** Animates the value if it was changed externally. */
   animated: boolean;
   /** Custom css */
   className: string;
   /** Color of the slider. */
   color: string;
+  /** Disables the slider. */
+  disabled: boolean;
   /** If set, this value will be used to set the fill percentage of the progress bar filler independently of the main value. */
   fillValue: number;
   /** Format value using this function before displaying it. */
@@ -124,9 +120,9 @@ export function Slider(props: Props) {
         return (
           <div
             className={classes([
-              'Slider',
-              'ProgressBar',
-              'ProgressBar--color--' + effectiveColor,
+              styles.slider,
+              progStyles.progressBar,
+              progStyles['color__' + effectiveColor],
               className,
               computeBoxClassName(rest),
             ])}
@@ -135,8 +131,8 @@ export function Slider(props: Props) {
           >
             <div
               className={classes([
-                'ProgressBar__fill',
-                hasFillValue && 'ProgressBar__fill--animated',
+                progStyles.fill,
+                hasFillValue && progStyles.fill__animated,
               ])}
               style={{
                 width: clamp01(scaledFillValue) * 100 + '%',
@@ -144,7 +140,7 @@ export function Slider(props: Props) {
               }}
             />
             <div
-              className="ProgressBar__fill"
+              className={progStyles.fill}
               style={{
                 width:
                   clamp01(Math.min(scaledFillValue, scaledDisplayValue)) * 100 +
@@ -152,18 +148,18 @@ export function Slider(props: Props) {
               }}
             />
             <div
-              className="Slider__cursorOffset"
+              className={styles.cursorOffset}
               style={{
                 width: clamp01(scaledDisplayValue) * 100 + '%',
               }}
             >
-              <div className="Slider__cursor" />
-              <div className="Slider__pointer" />
+              <div className={styles.cursor} />
+              <div className={styles.pointer} />
               {dragging && (
-                <div className="Slider__popupValue">{displayElement}</div>
+                <div className={styles.popupValue}>{displayElement}</div>
               )}
             </div>
-            <div className="ProgressBar__content">
+            <div className={progStyles.content}>
               {hasContent ? children : displayElement}
             </div>
             {inputElement}

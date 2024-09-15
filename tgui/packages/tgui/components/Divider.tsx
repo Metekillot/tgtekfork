@@ -1,10 +1,5 @@
-/**
- * @file
- * @copyright 2020 Aleksej Komarov
- * @license MIT
- */
-
-import { classes } from 'common/react';
+import { classes } from '../common/react';
+import styles from '../styles/components/Divider.module.scss';
 
 type Props = Partial<{
   hidden: boolean;
@@ -17,9 +12,8 @@ export function Divider(props: Props) {
   return (
     <div
       className={classes([
-        'Divider',
-        hidden && 'Divider--hidden',
-        vertical ? 'Divider--vertical' : 'Divider--horizontal',
+        hidden && styles.hidden,
+        vertical ? styles.vertical : styles.horizontal,
       ])}
     />
   );

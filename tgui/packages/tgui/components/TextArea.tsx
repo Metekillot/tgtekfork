@@ -1,15 +1,5 @@
-/**
- * @file
- * @copyright 2020 Aleksej Komarov
- * @author Warlockd
- * @license MIT
- */
-
-import { isEscape, KEY } from 'common/keys';
-import { classes } from 'common/react';
 import {
   forwardRef,
-  ReactElement,
   RefObject,
   useEffect,
   useImperativeHandle,
@@ -18,13 +8,16 @@ import {
 } from 'react';
 import { KeyboardEvent, SyntheticEvent } from 'react';
 
+import { isEscape, KEY } from '../common/keys';
+import { classes } from '../common/react';
+import styles from '../styles/components/TextArea.module.scss';
 import { Box, BoxProps } from './Box';
 import { toInputValue } from './Input';
 
 type Props = Partial<{
   autoFocus: boolean;
   autoSelect: boolean;
-  displayedValue: ReactElement;
+  displayedValue: string;
   dontUseTabForIndent: boolean;
   fluid: boolean;
   maxLength: number;
@@ -68,7 +61,7 @@ export const TextArea = forwardRef(
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const [scrolledAmount, setScrolledAmount] = useState(0);
 
-    const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    function handleKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
       if (event.key === KEY.Enter) {
         if (event.shiftKey) {
           event.currentTarget.focus();
@@ -104,7 +97,7 @@ export const TextArea = forwardRef(
           value.substring(selectionEnd);
         event.currentTarget.selectionEnd = selectionStart + 1;
       }
-    };
+    }
 
     useImperativeHandle(
       forwardedRef,
@@ -143,27 +136,17 @@ export const TextArea = forwardRef(
     return (
       <Box
         className={classes([
-          'TextArea',
-          fluid && 'TextArea--fluid',
-          noborder && 'TextArea--noborder',
+          styles.textArea,
+          fluid && styles.fluid,
+          noborder && styles.noborder,
           className,
         ])}
         {...rest}
       >
         {!!displayedValue && (
-          <div
-            style={{
-              height: '100%',
-              overflow: 'hidden',
-              position: 'absolute',
-              width: '100%',
-            }}
-          >
+          <div className={styles.wrapper}>
             <div
-              className={classes([
-                'TextArea__textarea',
-                'TextArea__textarea_custom',
-              ])}
+              className={classes([styles.inner, styles.custom])}
               style={{
                 transform: `translateY(-${scrolledAmount}px)`,
               }}
@@ -174,9 +157,9 @@ export const TextArea = forwardRef(
         )}
         <textarea
           className={classes([
-            'TextArea__textarea',
-            scrollbar && 'TextArea__textarea--scrollable',
-            nowrap && 'TextArea__nowrap',
+            styles.inner,
+            scrollbar && styles.scrollable,
+            nowrap && styles.nowrap,
           ])}
           maxLength={maxLength}
           onBlur={(event) => onChange?.(event, event.target.value)}

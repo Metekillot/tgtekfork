@@ -1,6 +1,3 @@
-import { isEscape, KEY } from 'common/keys';
-import { clamp } from 'common/math';
-import { BooleanLike, classes } from 'common/react';
 import {
   Component,
   createRef,
@@ -10,38 +7,41 @@ import {
   RefObject,
 } from 'react';
 
+import { isEscape, KEY } from '../common/keys';
+import { clamp, round } from '../common/math';
+import { BooleanLike, classes } from '../common/react';
+import styles from '../styles/components/NumberInput.module.scss';
 import { AnimatedNumber } from './AnimatedNumber';
 import { Box } from './Box';
 
 type Props = Required<{
-  value: number | string;
-  minValue: number;
   maxValue: number;
+  minValue: number;
   step: number;
+  value: number | string;
 }> &
   Partial<{
-    stepPixelSize: number;
-    disabled: BooleanLike;
-
-    className: string;
-    fluid: BooleanLike;
     animated: BooleanLike;
-    unit: string;
-    height: string;
-    width: string;
-    lineHeight: string;
+    className: string;
+    disabled: BooleanLike;
+    fluid: BooleanLike;
     fontSize: string;
     format: (value: number) => string;
+    height: string;
+    lineHeight: string;
     onChange: (value: number) => void;
     onDrag: (value: number) => void;
+    stepPixelSize: number;
+    unit: string;
+    width: string;
   }>;
 
 type State = {
-  editing: BooleanLike;
-  dragging: BooleanLike;
   currentValue: number;
-  previousValue: number;
+  dragging: BooleanLike;
+  editing: BooleanLike;
   origin: number;
+  previousValue: number;
 };
 
 export class NumberInput extends Component<Props, State> {
@@ -68,7 +68,7 @@ export class NumberInput extends Component<Props, State> {
   }
 
   componentDidMount(): void {
-    let displayValue = parseFloat(this.props.value.toString());
+    const displayValue = parseFloat(this.props.value.toString());
 
     this.setState({
       currentValue: displayValue,
@@ -123,22 +123,28 @@ export class NumberInput extends Component<Props, State> {
 
       const offset = state.origin - event.screenY;
       if (prevState.dragging) {
-        const stepOffset = isFinite(minValue) ? minValue % step : 0;
         // Translate mouse movement to value
         // Give it some headroom (by increasing clamp range by 1 step)
-        state.currentValue = clamp(
-          state.currentValue + (offset * step) / (stepPixelSize || 1),
+        const stepSize = stepPixelSize || 1;
+        const internalValue = clamp(
+          state.currentValue + (offset * step) / stepSize,
           minValue - step,
           maxValue + step,
         );
-        // Clamp the final value
-        state.currentValue = clamp(
-          state.currentValue - (state.currentValue % step) + stepOffset,
-          minValue,
-          maxValue,
-        );
-        // Set the new origin
-        state.origin = event.screenY;
+        if (Math.abs(internalValue - state.currentValue) >= step) {
+          // Clamp the final value
+          {
+            state.currentValue = clamp(
+              round(internalValue / step, 0) * step ,
+              minValue,
+              maxValue,
+            );
+          }
+          // Set the new origin
+          state.origin = event.screenY;
+        } else if (Math.abs(offset) > stepSize) {
+          state.origin = event.screenY;
+        }
       } else if (Math.abs(offset) > 4) {
         state.dragging = true;
       }
@@ -146,7 +152,7 @@ export class NumberInput extends Component<Props, State> {
     });
   };
 
-  handleDragEnd = (event: MouseEvent) => {
+  handleDragEnd = (_event: MouseEvent) => {
     const { dragging, currentValue } = this.state;
     const { onDrag, onChange, disabled } = this.props;
     if (disabled) {
@@ -172,7 +178,7 @@ export class NumberInput extends Component<Props, State> {
         setTimeout(() => {
           input.focus();
           input.select();
-        }, 1);
+        }, 10);
       }
     }
 
@@ -270,7 +276,7 @@ export class NumberInput extends Component<Props, State> {
     }
 
     const contentElement = (
-      <div className="NumberInput__content">
+      <div className={styles.content}>
         {animated && !dragging ? (
           <AnimatedNumber value={displayValue} format={format} />
         ) : format ? (
@@ -286,8 +292,8 @@ export class NumberInput extends Component<Props, State> {
     return (
       <Box
         className={classes([
-          'NumberInput',
-          fluid && 'NumberInput--fluid',
+          styles.numberInput,
+          fluid && styles.fluid,
           className,
         ])}
         minWidth={width}
@@ -296,9 +302,9 @@ export class NumberInput extends Component<Props, State> {
         fontSize={fontSize}
         onMouseDown={this.handleDragStart}
       >
-        <div className="NumberInput__barContainer">
+        <div className={styles.barContainer}>
           <div
-            className="NumberInput__bar"
+            className={styles.bar}
             style={{
               height:
                 clamp(
@@ -312,7 +318,7 @@ export class NumberInput extends Component<Props, State> {
         {contentElement}
         <input
           ref={this.inputRef}
-          className="NumberInput__input"
+          className={styles.inner}
           style={{
             display: !editing ? 'none' : 'inline',
             height: height,

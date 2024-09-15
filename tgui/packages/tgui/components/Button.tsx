@@ -1,12 +1,4 @@
-/**
- * @file
- * @copyright 2020 Aleksej Komarov
- * @license MIT
- */
-
 import { Placement } from '@popperjs/core';
-import { isEscape, KEY } from 'common/keys';
-import { BooleanLike, classes } from 'common/react';
 import {
   ChangeEvent,
   createRef,
@@ -17,6 +9,9 @@ import {
   useState,
 } from 'react';
 
+import { isEscape, KEY } from '../common/keys';
+import { BooleanLike, classes } from '../common/react';
+import styles from '../styles/components/Button.module.scss';
 import { Box, BoxProps, computeBoxClassName, computeBoxProps } from './Box';
 import { Icon } from './Icon';
 import { Tooltip } from './Tooltip';
@@ -29,40 +24,58 @@ import { Tooltip } from './Tooltip';
  */
 type EllipsisUnion =
   | {
-      ellipsis: true;
       children: string;
       /** @deprecated use children instead */
       content?: never;
+      /** Cuts off text with an ellipsis */
+      ellipsis: true;
     }
   | Partial<{
-      ellipsis: undefined;
       children: ReactNode;
       /** @deprecated use children instead */
       content: ReactNode;
+      ellipsis: undefined;
     }>;
 
 type Props = Partial<{
+  /** Captures keyboard events */
   captureKeys: boolean;
+  /** Makes the button circular */
   circular: boolean;
+  /** Reduces the padding of the button */
   compact: boolean;
+  /** Disables and greys out the button */
   disabled: BooleanLike;
+  /** Fill all available horizontal space */
   fluid: boolean;
+  /** Adds an icon to the button */
   icon: string | false;
+  /** Icon color */
   iconColor: string;
+  /** Icon position */
   iconPosition: string;
+  /** Icon rotation */
   iconRotation: number;
+  /** Icon size */
+  iconSize: number
+  /** Makes the icon spin */
   iconSpin: BooleanLike;
+  /** Called when element is clicked */
   onClick: (e: any) => void;
+  /** Activates the button (gives it a green color) */
   selected: BooleanLike;
+  /** A fancy, boxy tooltip, which appears when hovering over the button */
   tooltip: ReactNode;
+  /** Position of the tooltip. See [`Popper`](#Popper) for valid options. */
   tooltipPosition: Placement;
+  /** Align content vertically using flex. Use lineHeight if the height is static. */
   verticalAlignContent: string;
 }> &
   EllipsisUnion &
   BoxProps;
 
 /** Clickable button. Comes with variants. Read more in the documentation. */
-export const Button = (props: Props) => {
+export function Button(props: Props) {
   const {
     captureKeys = true,
     children,
@@ -78,6 +91,7 @@ export const Button = (props: Props) => {
     iconColor,
     iconPosition,
     iconRotation,
+    iconSize,
     iconSpin,
     onClick,
     selected,
@@ -92,21 +106,19 @@ export const Button = (props: Props) => {
   let buttonContent = (
     <div
       className={classes([
-        'Button',
-        fluid && 'Button--fluid',
-        disabled && 'Button--disabled',
-        selected && 'Button--selected',
-        !!toDisplay && 'Button--hasContent',
-        circular && 'Button--circular',
-        compact && 'Button--compact',
-        iconPosition && 'Button--iconPosition--' + iconPosition,
-        verticalAlignContent && 'Button--flex',
-        verticalAlignContent && fluid && 'Button--flex--fluid',
+        styles.button,
+        fluid && styles.fluid,
+        disabled && styles.disabled,
+        selected && styles.selected,
+        circular && styles.circular,
+        compact && styles.compact,
+        verticalAlignContent && styles.flex,
+        verticalAlignContent && fluid && styles.flex__fluid,
         verticalAlignContent &&
-          'Button--verticalAlignContent--' + verticalAlignContent,
+          styles['verticalAlignContent__' + verticalAlignContent],
         color && typeof color === 'string'
-          ? 'Button--color--' + color
-          : 'Button--color--default',
+          ? styles['color__' + color]
+          : styles['color__default'],
         className,
         computeBoxClassName(rest),
       ])}
@@ -137,12 +149,14 @@ export const Button = (props: Props) => {
       }}
       {...computeBoxProps(rest)}
     >
-      <div className="Button__content">
+      <div className={styles.content}>
         {icon && iconPosition !== 'right' && (
           <Icon
+            mr={toDisplay ? 1 : 0}
             name={icon}
             color={iconColor}
             rotation={iconRotation}
+            size={iconSize}
             spin={iconSpin}
           />
         )}
@@ -150,19 +164,18 @@ export const Button = (props: Props) => {
           toDisplay
         ) : (
           <span
-            className={classes([
-              'Button--ellipsis',
-              icon && 'Button__textMargin',
-            ])}
+            className={classes([styles.ellipsis, icon && styles.textMargin])}
           >
             {toDisplay}
           </span>
         )}
         {icon && iconPosition === 'right' && (
           <Icon
+            ml={toDisplay ? 1 : 0}
             name={icon}
             color={iconColor}
             rotation={iconRotation}
+            size={iconSize}
             spin={iconSpin}
           />
         )}
@@ -179,7 +192,7 @@ export const Button = (props: Props) => {
   }
 
   return buttonContent;
-};
+}
 
 type CheckProps = Partial<{
   checked: BooleanLike;
@@ -187,7 +200,7 @@ type CheckProps = Partial<{
   Props;
 
 /** Visually toggles between checked and unchecked states. */
-export const ButtonCheckbox = (props: CheckProps) => {
+export function ButtonCheckbox(props: CheckProps) {
   const { checked, ...rest } = props;
 
   return (
@@ -198,7 +211,7 @@ export const ButtonCheckbox = (props: CheckProps) => {
       {...rest}
     />
   );
-};
+}
 
 Button.Checkbox = ButtonCheckbox;
 
@@ -210,7 +223,7 @@ type ConfirmProps = Partial<{
   Props;
 
 /**  Requires user confirmation before triggering its action. */
-const ButtonConfirm = (props: ConfirmProps) => {
+function ButtonConfirm(props: ConfirmProps) {
   const {
     children,
     color,
@@ -224,7 +237,7 @@ const ButtonConfirm = (props: ConfirmProps) => {
   } = props;
   const [clickedOnce, setClickedOnce] = useState(false);
 
-  const handleClick = (event: MouseEvent<HTMLDivElement>) => {
+  function handleClick(event: MouseEvent<HTMLDivElement>) {
     if (!clickedOnce) {
       setClickedOnce(true);
       return;
@@ -232,7 +245,7 @@ const ButtonConfirm = (props: ConfirmProps) => {
 
     onClick?.(event);
     setClickedOnce(false);
-  };
+  }
 
   return (
     <Button
@@ -244,7 +257,7 @@ const ButtonConfirm = (props: ConfirmProps) => {
       {clickedOnce ? confirmContent : children}
     </Button>
   );
-};
+}
 
 Button.Confirm = ButtonConfirm;
 
@@ -259,7 +272,7 @@ type InputProps = Partial<{
   Props;
 
 /** Accepts and handles user input. */
-const ButtonInput = (props: InputProps) => {
+function ButtonInput(props: InputProps) {
   const {
     children,
     color = 'default',
@@ -283,7 +296,7 @@ const ButtonInput = (props: InputProps) => {
 
   const toDisplay = content || children;
 
-  const commitResult = (e) => {
+  function commitResult(e) {
     const input = inputRef.current;
     if (!input) return;
 
@@ -295,7 +308,7 @@ const ButtonInput = (props: InputProps) => {
         onCommit(e, defaultValue);
       }
     }
-  };
+  }
 
   useEffect(() => {
     const input = inputRef.current;
@@ -306,16 +319,18 @@ const ButtonInput = (props: InputProps) => {
       try {
         input.focus();
         input.select();
-      } catch {}
+      } catch {
+        // Ignore errors
+      }
     }
   }, [inInput, currentValue]);
 
   let buttonContent = (
     <Box
       className={classes([
-        'Button',
-        fluid && 'Button--fluid',
-        'Button--color--' + color,
+        styles.button,
+        fluid && styles.fluid,
+        styles['color__' + color],
       ])}
       {...rest}
       onClick={() => setInInput(true)}
@@ -360,14 +375,14 @@ const ButtonInput = (props: InputProps) => {
   }
 
   return buttonContent;
-};
+}
 
 Button.Input = ButtonInput;
 
 type FileProps = {
   accept: string;
   multiple?: boolean;
-  onSelectFiles: (files: FileList) => void;
+  onSelectFiles: (files: string | string[]) => void;
 } & Props;
 
 /**  Accepts file input */
@@ -376,11 +391,24 @@ function ButtonFile(props: FileProps) {
 
   const inputRef = useRef<HTMLInputElement>(null);
 
+  async function read(files: FileList) {
+    const promises = Array.from(files).map((file) => {
+      const reader = new FileReader();
+
+      return new Promise<string>((resolve) => {
+        reader.onload = () => resolve(reader.result as string);
+        reader.readAsText(file);
+      });
+    });
+
+    return await Promise.all(promises);
+  }
+
   async function handleChange(event: ChangeEvent<HTMLInputElement>) {
     const files = event.target.files;
     if (files?.length) {
-      onSelectFiles(files);
-      event.target.value = '';
+      const readFiles = await read(files);
+      onSelectFiles(multiple ? readFiles : readFiles[0]);
     }
   }
 

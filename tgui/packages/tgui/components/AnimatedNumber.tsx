@@ -1,24 +1,13 @@
-/**
- * @file
- * @copyright 2020 Aleksej Komarov
- * @license MIT
- */
-
-import { clamp, toFixed } from 'common/math';
 import { Component, createRef } from 'react';
 
-const isSafeNumber = (value: number) => {
-  // prettier-ignore
-  return typeof value === 'number'
-    && Number.isFinite(value)
-    && !Number.isNaN(value);
-};
+import { clamp, toFixed } from '../common/math';
 
-export type AnimatedNumberProps = {
+type Props = {
   /**
-   * The target value to approach.
+   * If provided, a function that formats the inner string. By default,
+   * attempts to match the numeric precision of `value`.
    */
-  value: number;
+  format?: (value: number) => string;
 
   /**
    * If provided, the initial value displayed. By default, the same as `value`.
@@ -28,11 +17,16 @@ export type AnimatedNumberProps = {
   initial?: number;
 
   /**
-   * If provided, a function that formats the inner string. By default,
-   * attempts to match the numeric precision of `value`.
+   * The target value to approach.
    */
-  format?: (value: number) => string;
+  value: number;
 };
+
+function isSafeNumber(value: number): boolean {
+  return (
+    typeof value === 'number' && Number.isFinite(value) && !Number.isNaN(value)
+  );
+}
 
 /**
  * Animated numbers are animated at roughly 60 frames per second.
@@ -54,7 +48,7 @@ const EPSILON = 10e-4;
  * An animated number label. Shows a number, formatted with an optionally
  * provided function, and animates it towards its target value.
  */
-export class AnimatedNumber extends Component<AnimatedNumberProps> {
+export class AnimatedNumber extends Component<Props> {
   /**
    * The inner `<span/>` being updated sixty times per second.
    */
@@ -70,7 +64,7 @@ export class AnimatedNumber extends Component<AnimatedNumberProps> {
    */
   currentValue: number = 0;
 
-  constructor(props: AnimatedNumberProps) {
+  constructor(props: Props) {
     super(props);
 
     const { initial, value } = props;
@@ -93,7 +87,7 @@ export class AnimatedNumber extends Component<AnimatedNumberProps> {
     this.stopTicking();
   }
 
-  shouldComponentUpdate(newProps: AnimatedNumberProps) {
+  shouldComponentUpdate(newProps: Props) {
     if (newProps.value !== this.props.value) {
       // The target value has been adjusted; start animating if we aren't
       // already.

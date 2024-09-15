@@ -1,15 +1,9 @@
-/**
- * @file
- * @copyright 2020 Aleksej Komarov
- * @license MIT
- */
-
-import { classes } from 'common/react';
-
+import { classes } from '../common/react';
+import styles from '../styles/components/BlockQuote.module.scss';
 import { Box, BoxProps } from './Box';
 
 export function BlockQuote(props: BoxProps) {
   const { className, ...rest } = props;
 
-  return <Box className={classes(['BlockQuote', className])} {...rest} />;
+  return <Box className={classes([styles.blockQuote, className])} {...rest} />;
 }

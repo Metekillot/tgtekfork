@@ -1,14 +1,9 @@
-/**
- * @file
- * @copyright 2020 Aleksej Komarov
- * @license MIT
- */
-
-import { isEscape, KEY } from 'common/keys';
-import { classes } from 'common/react';
-import { debounce } from 'common/timer';
 import { KeyboardEvent, SyntheticEvent, useEffect, useRef } from 'react';
 
+import { isEscape, KEY } from '../common/keys';
+import { classes } from '../common/react';
+import { debounce } from '../common/timer';
+import styles from '../styles/components/Input.module.scss';
 import { Box, BoxProps } from './Box';
 
 type ConditionalProps =
@@ -59,8 +54,6 @@ type OptionalProps = Partial<{
   placeholder: string;
   /** Clears the input value on enter */
   selfClear: boolean;
-  /** Auto-updates the input value on props change */
-  updateOnPropsChange: boolean;
   /** The state variable of the input. */
   value: string | number;
 }>;
@@ -98,7 +91,6 @@ export function Input(props: Props) {
     placeholder,
     selfClear,
     value,
-    updateOnPropsChange,
     ...rest
   } = props;
 
@@ -158,32 +150,32 @@ export function Input(props: Props) {
     }, 1);
   }, []);
 
-  if (updateOnPropsChange) {
-    /** Updates the initial value on props change */
-    useEffect(() => {
-      const input = inputRef.current;
-      if (!input) return;
+  useEffect(() => {
+    const input = inputRef.current;
+    if (!input) return;
 
-      const newValue = toInputValue(value);
-      if (input.value === newValue) return;
+    if (document.activeElement === input) {
+      return;
+    }
 
-      input.value = newValue;
-    }, [value]);
-  }
+    const newValue = toInputValue(value);
+
+    if (input.value !== newValue) input.value = newValue;
+  });
 
   return (
     <Box
       className={classes([
-        'Input',
-        fluid && 'Input--fluid',
-        monospace && 'Input--monospace',
+        styles.input,
+        fluid && styles.fluid,
+        monospace && styles.monospace,
         className,
       ])}
       {...rest}
     >
-      <div className="Input__baseline">.</div>
+      <div className={styles.baseline}>.</div>
       <input
-        className="Input__input"
+        className={styles.inner}
         disabled={disabled}
         maxLength={maxLength}
         onBlur={(event) => onChange?.(event, event.target.value)}

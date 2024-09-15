@@ -1,16 +1,21 @@
-/* eslint-disable react/no-deprecated */
 // TODO: Rewrite as an FC, remove this lint disable
 import { createPopper, Placement, VirtualElement } from '@popperjs/core';
 import { Component, ReactNode } from 'react';
 import { findDOMNode, render } from 'react-dom';
 
-type TooltipProps = {
-  children?: ReactNode;
-  content: ReactNode;
-  position?: Placement;
-};
+import styles from '../styles/components/Tooltip.module.scss';
 
-type TooltipState = {
+type Props = {
+  /** The content to display in the tooltip */
+  content: ReactNode;
+} & Partial<{
+  /** Hovering this element will show the tooltip */
+  children: ReactNode;
+  /** Where to place the tooltip relative to the reference element */
+  position: Placement;
+}>;
+
+type State = {
   hovered: boolean;
 };
 
@@ -35,7 +40,7 @@ const NULL_RECT: DOMRect = {
   toJSON: () => null,
 };
 
-export class Tooltip extends Component<TooltipProps, TooltipState> {
+export class Tooltip extends Component<Props, State> {
   // Mounting poppers is really laggy because popper.js is very slow.
   // Thus, instead of using the Popper component, Tooltip creates ONE popper
   // and stores every tooltip inside that.
@@ -44,11 +49,8 @@ export class Tooltip extends Component<TooltipProps, TooltipState> {
   static singletonPopper: ReturnType<typeof createPopper> | undefined;
   static currentHoveredElement: Element | undefined;
   static virtualElement: VirtualElement = {
-    // prettier-ignore
-    getBoundingClientRect: () => (
-      Tooltip.currentHoveredElement?.getBoundingClientRect()
-        ?? NULL_RECT
-    ),
+    getBoundingClientRect: () =>
+      Tooltip.currentHoveredElement?.getBoundingClientRect() ?? NULL_RECT,
   };
 
   getDOMNode() {
@@ -61,7 +63,7 @@ export class Tooltip extends Component<TooltipProps, TooltipState> {
     // Because this component is written in TypeScript, we will know
     // immediately if this internal variable is removed.
     //
-    // eslint-disable-next-line react/no-find-dom-node
+
     return findDOMNode(this) as Element;
   }
 
@@ -76,7 +78,7 @@ export class Tooltip extends Component<TooltipProps, TooltipState> {
       let renderedTooltip = Tooltip.renderedTooltip;
       if (renderedTooltip === undefined) {
         renderedTooltip = document.createElement('div');
-        renderedTooltip.className = 'Tooltip';
+        renderedTooltip.className = styles.tooltip;
         document.body.appendChild(renderedTooltip);
         Tooltip.renderedTooltip = renderedTooltip;
       }

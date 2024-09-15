@@ -1,29 +1,29 @@
-/**
- * @file
- * @copyright 2020 Aleksej Komarov
- * @author Original Aleksej Komarov
- * @author Changes ThePotato97
- * @license MIT
- */
+import { CSSProperties, ReactNode } from 'react';
 
-import { BooleanLike, classes } from 'common/react';
-import { ReactNode } from 'react';
-
+import { BooleanLike, classes } from '../common/react';
+import style from '../styles/components/Icon.module.scss';
 import { BoxProps, computeBoxClassName, computeBoxProps } from './Box';
+
+type Props = {
+  /** Icon name. See [icon list](https://fontawesome.com/v5/search?o=r&m=free) */
+  name: string;
+} & Partial<{
+  /** Custom CSS class. */
+  className: string;
+  /** Icon rotation, in degrees. */
+  rotation: number;
+  /** Icon size. `1` is normal size, `2` is two times bigger. Fractional numbers are supported. */
+  size: number;
+  /** Whether an icon should be spinning. Good for load indicators. */
+  spin: BooleanLike;
+  /** Custom CSS. */
+  style: CSSProperties;
+}> &
+  BoxProps;
 
 const FA_OUTLINE_REGEX = /-o$/;
 
-type IconPropsUnique = { name: string } & Partial<{
-  size: number;
-  spin: BooleanLike;
-  className: string;
-  rotation: number;
-  style: Partial<HTMLDivElement['style']>;
-}>;
-
-export type IconProps = IconPropsUnique & BoxProps;
-
-export const Icon = (props: IconProps) => {
+export function Icon(props: Props) {
   const { name, size, spin, className, rotation, ...rest } = props;
 
   const customStyle = rest.style || {};
@@ -59,7 +59,7 @@ export const Icon = (props: IconProps) => {
   return (
     <i
       className={classes([
-        'Icon',
+        style.icon,
         iconClass,
         className,
         computeBoxClassName(rest),
@@ -67,7 +67,7 @@ export const Icon = (props: IconProps) => {
       {...boxProps}
     />
   );
-};
+}
 
 type IconStackUnique = {
   children: ReactNode;
@@ -76,16 +76,20 @@ type IconStackUnique = {
 
 export type IconStackProps = IconStackUnique & BoxProps;
 
-export const IconStack = (props: IconStackProps) => {
+export function IconStack(props: IconStackProps) {
   const { className, children, ...rest } = props;
   return (
     <span
-      className={classes(['IconStack', className, computeBoxClassName(rest)])}
+      className={classes([
+        style.iconStack,
+        className,
+        computeBoxClassName(rest),
+      ])}
       {...computeBoxProps(rest)}
     >
       {children}
     </span>
   );
-};
+}
 
 Icon.Stack = IconStack;

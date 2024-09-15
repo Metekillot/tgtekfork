@@ -1,34 +1,56 @@
-/**
- * @file
- * @copyright 2020 Aleksej Komarov
- * @license MIT
- */
-
-import { clamp01, keyOfMatchingRange, scale, toFixed } from 'common/math';
-import { classes } from 'common/react';
 import { PropsWithChildren } from 'react';
 
-import { CSS_COLORS } from '../constants';
+import { CSS_COLORS } from '../common/constants';
+import { clamp01, keyOfMatchingRange, scale, toFixed } from '../common/math';
+import { classes } from '../common/react';
+import styles from '../styles/components/ProgressBar.module.scss';
 import { BoxProps, computeBoxClassName, computeBoxProps } from './Box';
 
 type Props = {
+  /**
+   * Current progress as a floating point number between `minValue` (default: 0) and `maxValue` (default: 1).
+   * Determines the percentage and how filled the bar is.
+   */
   value: number;
 } & Partial<{
-  backgroundColor: string;
-  className: string;
+  /**
+   * Color of the progress bar. Can take any of the following formats:
+   * - `#ffffff` - Hex format
+   * - `rgb(r,g,b) / rgba(r,g,b,a)` - RGB format
+   * - `<name>` - the name of a `color-<name>` CSS class. See `CSS_COLORS` in `constants.js`.
+   * - `<name>` - the name of a base CSS color, if not overridden by the definitions above.
+   */
   color: string;
-  height: string | number;
+  /** Highest possible value. */
   maxValue: number;
+  /** Lowest possible value. */
   minValue: number;
+  /**
+   * Applies a `color` to the progress bar based on whether the value lands in the range between `from` and `to`.
+   * This takes an object with the following format:
+   * ```tsx
+   * {
+   *   (colorname): [from, to]
+   * }
+   * ```
+   * For example:
+   * ```tsx
+   * <ProgressBar
+   *   value={0.5}
+   *   ranges={{
+   *     bad: [0, 0.5],
+   *     good: [0.5, 1],
+   *   }}
+   * />
+   * ```
+   *
+   */
   ranges: Record<string, [number, number]>;
-  style: Partial<HTMLDivElement['style']>;
-  title: string;
-  width: string | number;
 }> &
-  Partial<BoxProps> &
+  BoxProps &
   PropsWithChildren;
 
-export const ProgressBar = (props: Props) => {
+export function ProgressBar(props: Props) {
   const {
     className,
     value,
@@ -49,7 +71,11 @@ export const ProgressBar = (props: Props) => {
   // a name for a color-<name> class, or a base CSS class.
   const outerProps = computeBoxProps(rest);
 
-  const outerClasses = ['ProgressBar', className, computeBoxClassName(rest)];
+  const outerClasses = [
+    styles.progressBar,
+    className,
+    computeBoxClassName(rest),
+  ];
   const fillStyles = {
     width: clamp01(scaledValue) * 100 + '%',
   };
@@ -58,7 +84,7 @@ export const ProgressBar = (props: Props) => {
     effectiveColor === 'default'
   ) {
     // If the color is a color-<name> class, just use that.
-    outerClasses.push('ProgressBar--color--' + effectiveColor);
+    outerClasses.push(styles['color__' + effectiveColor]);
   } else {
     // Otherwise, set styles directly.
     outerProps.style = { ...outerProps.style, borderColor: effectiveColor };
@@ -68,12 +94,12 @@ export const ProgressBar = (props: Props) => {
   return (
     <div className={classes(outerClasses)} {...outerProps}>
       <div
-        className="ProgressBar__fill ProgressBar__fill--animated"
+        className={classes([styles.fill, styles.fill__animated])}
         style={fillStyles}
       />
-      <div className="ProgressBar__content">
+      <div className={styles.content}>
         {hasContent ? children : toFixed(scaledValue * 100) + '%'}
       </div>
     </div>
   );
-};
+}
