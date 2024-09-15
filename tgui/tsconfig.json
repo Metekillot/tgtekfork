@@ -2,6 +2,12 @@
   "compilerOptions": {
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "tgui-core/react": ["packages/common/react"],
+      "tgui-core/components": ["packages/tgui/components"],
+      "tgui-core/*": ["packages/common/*"]
+    },
     "checkJs": false,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
