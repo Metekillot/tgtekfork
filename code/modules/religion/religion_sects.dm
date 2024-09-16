@@ -101,6 +101,53 @@
 /// Activates when an individual uses a rite. Can provide different/additional benefits depending on the user.
 /datum/religion_sect/proc/on_riteuse(mob/living/user, atom/religious_tool)
 
+/datum/religion_sect/proc/bible_beat(mob/living/target_mob, mob/living/user, params, heal_mode)
+	if(!ISADVANCEDTOOLUSER(user))
+		balloon_alert(user, "not dextrous enough!")
+		return
+
+	if(HAS_TRAIT(user, TRAIT_CLUMSY) && prob(50))
+		to_chat(user, span_danger("[src] slips out of your hand and hits your head."))
+		user.take_bodypart_damage(10)
+		user.Unconscious(40 SECONDS)
+		return
+
+	if(!user.mind?.holy_role)
+		to_chat(user, span_danger("The book sizzles in your hands."))
+		user.take_bodypart_damage(burn = 10)
+		return
+
+	if(!heal_mode)
+		return ..()
+
+	if(target_mob.stat == DEAD)
+		if(!sect_dead_bless(target_mob, user))
+			target_mob.visible_message(span_danger("[user] smacks [target_mob]'s lifeless corpse with [src]."))
+			playsound(target_mob, SFX_PUNCH, 25, TRUE, -1)
+		return
+
+	if(user == target_mob)
+		balloon_alert(user, "can't heal yourself!")
+		return
+
+	var/smack_chance = DEFAULT_SMACK_CHANCE
+	if(GLOB.religious_sect)
+		smack_chance = GLOB.religious_sect.smack_chance
+	#WARN "Don't forget to rename GLOB.religious_sect to religion_sect"
+
+	var/success = !prob(smack_chance) && sect_bless(target_mob, user)
+	if(success)
+		return
+	if(iscarbon(target_mob))
+		var/mob/living/carbon/carbon_target = target_mob
+		if(!istype(carbon_target.head, /obj/item/clothing/head/helmet))
+			carbon_target.adjustOrganLoss(ORGAN_SLOT_BRAIN, 5, 60)
+			carbon_target.balloon_alert(carbon_target, "you feel dumber!")
+	target_mob.visible_message(span_danger("[user] beats [target_mob] over the head with [src]!"), \
+			span_userdanger("[user] beats [target_mob] over the head with [src]!"))
+	playsound(target_mob, SFX_PUNCH, 25, TRUE, -1)
+	log_combat(user, target_mob, "attacked", src)
+
 /// Replaces the bible's bless mechanic. Return TRUE if you want to not do the brain hit.
 /datum/religion_sect/proc/sect_bless(mob/living/target, mob/living/chap)
 	if(!ishuman(target))

@@ -1,9 +1,11 @@
-///role below priests, for losing most powers of priests but still being holy.
-#define HOLY_ROLE_DEACON 1
-///default priestly role
-#define HOLY_ROLE_PRIEST 2
+///The generic religious sect, for when a sect hasn't been chosen
+#define GENERIC_SECT GLOB.default_religious_sect
+///role below clergy, for losing most powers of clergy but still being sacred.
+#define SACRED_ROLE_WORSHIPPER 1
+///default spiritual leader role
+#define SACRED_ROLE_CLERGY 2
 ///the one who designates the religion
-#define HOLY_ROLE_HIGHPRIEST 3
+#define SACRED_ROLE_HIGH_CLERGY 3
 
 #define ALIGNMENT_GOOD "good"
 #define ALIGNMENT_NEUT "neutral"

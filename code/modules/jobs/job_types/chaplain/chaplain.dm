@@ -45,7 +45,7 @@
 	var/obj/item/book/bible/booze/holy_bible = new
 	if(GLOB.religion)
 		if(human_spawned.mind)
-			human_spawned.mind.holy_role = HOLY_ROLE_PRIEST
+			human_spawned.mind.holy_role = SACRED_ROLE_CLERGY
 		holy_bible.deity_name = GLOB.deity
 		holy_bible.name = GLOB.bible_name
 		// These checks are important as there's no guarantee the "HOLY_ROLE_HIGHPRIEST" chaplain has selected a bible skin.

@@ -126,7 +126,7 @@
 	if(holiness == NONE)
 		to_chat(taker, span_warning("Try as you may, you're seemingly unable to pick [src] up!"))
 		no_take = TRUE
-	else if(holiness == HOLY_ROLE_DEACON) //deacons cannot pick them up either
+	else if(holiness == SACRED_ROLE_WORSHIPPER) //deacons cannot pick them up either
 		no_take = TRUE
 		to_chat(taker, span_warning("You cannot pick [src] up. It seems you aren't important enough to [GLOB.deity] to do that."))
 	..()

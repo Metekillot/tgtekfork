@@ -2,6 +2,11 @@
 GLOBAL_VAR(religion)
 GLOBAL_VAR(deity)
 GLOBAL_DATUM(religious_sect, /datum/religion_sect)
+// An instance of the generic of the religious_sect parent datum to call procs on
+// in the case of chaplains who have neglected to choose a sect still needing to do
+// chaplain activities, or of laymen making limited use of religious items if there's no
+// chaplain (and, erego, no chosen sect)
+GLOBAL_DATUM_INIT(default_religious_sect, /datum/religion_sect, new)
 
 //bible
 GLOBAL_VAR(bible_name)

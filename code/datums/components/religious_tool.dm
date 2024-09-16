@@ -147,7 +147,7 @@
 
 /// Select the sect, called from [/datum/component/religious_tool/proc/AttemptActions]
 /datum/component/religious_tool/proc/select_sect(mob/living/user, path)
-	if(user.mind.holy_role != HOLY_ROLE_HIGHPRIEST)
+	if(user.mind.holy_role != SACRED_ROLE_HIGH_CLERGY)
 		to_chat(user, span_warning("You are not the high priest, and therefore cannot select a religious sect."))
 		return
 	if(!user.can_perform_action(parent, FORBID_TELEKINESIS_REACH))
@@ -157,8 +157,8 @@
 
 /// Perform the rite, called from [/datum/component/religious_tool/proc/AttemptActions]
 /datum/component/religious_tool/proc/perform_rite(mob/living/user, path)
-	if(user.mind.holy_role < HOLY_ROLE_PRIEST)
-		if(user.mind.holy_role == HOLY_ROLE_DEACON)
+	if(user.mind.holy_role < SACRED_ROLE_CLERGY)
+		if(user.mind.holy_role == SACRED_ROLE_WORSHIPPER)
 			to_chat(user, "<span class='warning'>You are merely a deacon of [GLOB.deity], and therefore cannot perform rites.")
 		else
 			to_chat(user, "<span class='warning'>You are not holy, and therefore cannot perform rites.")
