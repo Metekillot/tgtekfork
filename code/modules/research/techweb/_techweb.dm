@@ -75,6 +75,13 @@
 	  * research_queue_nodes[node_id] = user_enqueued
 	*/
 	var/list/research_queue_nodes = list()
+	/**
+	 * A list of nodes that have been locked down by someone with research director access
+	 * And preventing them from being researched - or, if already researched, rescinding any designs
+	 * they provide.
+	 * locked_down_nodes[node_id] = node
+	 */
+	var/list/locked_down_nodes = list()
 
 
 /datum/techweb/New()
@@ -264,6 +271,8 @@
  * * node - the node to check
  */
 /datum/techweb/proc/can_unlock_node(datum/techweb_node/node)
+	if(node.id in locked_down_nodes)
+		return FALSE
 	return can_afford(node.get_price(src)) && have_experiments_for_node(node)
 
 /**

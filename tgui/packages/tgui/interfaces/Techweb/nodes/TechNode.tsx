@@ -99,6 +99,7 @@ export function TechNode(props: Props) {
       buttons={
         !nocontrols && (
           <>
+            {<Button icon="tasks">LOCKDOWN</Button>}
             {tier > 0 &&
               (!!can_unlock && (is_free || queue_nodes.length === 0) ? (
                 <Button

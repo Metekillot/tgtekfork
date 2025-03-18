@@ -327,6 +327,42 @@ GLOBAL_LIST_EMPTY(announcement_systems)
 		"BEPIS BEPIS BEPIS",
 		"ERR)#R - B*@ TEXT F*O(ND!")
 
+/datum/aas_config_entry/locked_down_node
+	name = "Research Node Lockdown Announcement"
+	announcement_lines_map = list(
+		"Message" = "The %NODE techweb node has been locked down.")
+	vars_and_tooltips_map = list(
+		"NODE" = "will be replaced with the RD-locked node."
+	)
+
+/datum/aas_config_entry/locked_down_node/act_up()
+	. = ..()
+	if (.)
+		return
+
+	announcement_lines_map["Message"] = pick(
+		"ATTEMPT CACH### CACHE INTEGRITY WA!#() RELOA999 ZULU#$$",
+		"MINING EQUIPMENT",
+		"ERR)#R - B*@ TEXT F*O(ND!")
+
+/datum/aas_config_entry/lockdown_lifted_node
+	name = "Research Node Lockdown Lifted Announcement"
+	announcement_lines_map = list(
+		"Message" = "The %NODE techweb node lockdown has been lifted.")
+	vars_and_tooltips_map = list(
+		"NODE" = "will be replaced with the available node."
+	)
+
+/datum/aas_config_entry/lockdown_lifted_node/act_up()
+	. = ..()
+	if (.)
+		return
+
+	announcement_lines_map["Message"] = pick(
+		"*$$NOD!! LOC!!! ADMIN_BITERR###",
+		"WHIS#()ECHO-WHIS#()!@DATAB#SE",
+		"ERR)R - BUFFER OVE#FLO*")
+
 /datum/aas_config_entry/arrivals_broken
 	name = "Arrivals Shuttle Malfunction Announcement"
 	announcement_lines_map = list(
