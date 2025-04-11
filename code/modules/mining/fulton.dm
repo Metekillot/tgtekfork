@@ -1,5 +1,12 @@
-GLOBAL_LIST_EMPTY(total_extraction_beacons)
+#define SSFULTON SSfulton_extraction
 
+#define ZERO_RISK 0
+#define LOW_RISK 15
+#define MEDIUM_RISK 50
+#define EXTREME_RISK 75
+
+#define DEFAULT_ATTACHMENT_TIME 10 SECONDS
+#define RUSHED_ATTACHMENT_TIME 5 SECONDS
 
 /obj/item/extraction_pack
 	name = "fulton extraction pack"
@@ -13,14 +20,16 @@ GLOBAL_LIST_EMPTY(total_extraction_beacons)
 	var/beacon_network = "ss13"
 	/// Number of uses left
 	var/uses_left = 3
-	/// Can be used indoors
-	var/can_use_indoors = FALSE
-	/// Can be used on living creatures
-	var/safe_for_living_creatures = TRUE
 	/// Maximum force that can be used to extract; MOVE_FORCE_EXTREMELY_STRONG allows extraction of most any
 	/// unanchored thing, excluding megafauna or outliers such as the supermatter
 	var/max_force_fulton = MOVE_FORCE_EXTREMELY_STRONG
-	var/attachment_time = 8 SECONDS
+	/// Can be used indoors
+	var/can_use_indoors = FALSE
+	/// How dangerous extraction is to the extracted target
+	var/extraction_risk = ZERO_RISK
+	var/extraction_risk_rushed = LOW_RISK
+	var/attachment_time = DEFAULT_ATTACHMENT_TIME
+	var/attachment_time_rushed = RUSHED_ATTACHMENT_TIME
 
 /obj/item/extraction_pack/examine(mob/user)
 	. = ..()
@@ -291,10 +300,18 @@ GLOBAL_LIST_EMPTY(total_extraction_beacons)
 	name = "bluespace fulton extraction pack"
 	can_use_indoors = TRUE
 	// Can be researched by the crew, however, it has a much longer extraction time, discouraging their use in chicanery
-	attachment_time = 15 SECONDS
+	attachment_time = 20 SECONDS
 
 /obj/item/extraction_pack/bluespace/syndicate
 	name = "syndicate fulton extraction pack"
 	can_use_indoors = TRUE
 	// To give ne'er-dowells a reason to actually want to use these
-	attachment_time = 3 SECONDS
+	attachment_time = 6 SECONDS
+
+#undef SSFULTON
+#undef ZERO_RISK
+#undef LOW_RISK
+#undef MEDIUM_RISK
+#undef EXTREME_RISK
+#undef DEFAULT_ATTACHMENT_TIME
+#undef RUSHED_ATTACHMENT_TIME
