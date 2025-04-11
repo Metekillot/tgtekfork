@@ -1,25 +1,28 @@
 GLOBAL_LIST_EMPTY(total_extraction_beacons)
 
+
 /obj/item/extraction_pack
 	name = "fulton extraction pack"
 	desc = "A balloon that can be used to extract equipment or personnel to a Fulton Recovery Beacon. Anything not bolted down can be moved. Link the pack to a beacon by using the pack in hand."
 	icon = 'icons/obj/fulton.dmi'
 	icon_state = "extraction_pack"
-	w_class = WEIGHT_CLASS_NORMAL
+	w_class = WEIGHT_CLASS_SMALL
 	/// Beacon weakref
 	var/datum/weakref/beacon_ref
-	/// List of networks
-	var/list/beacon_networks = list("station")
+	/// Beacon network name
+	var/beacon_network = "ss13"
 	/// Number of uses left
 	var/uses_left = 3
 	/// Can be used indoors
-	var/can_use_indoors
+	var/can_use_indoors = FALSE
 	/// Can be used on living creatures
 	var/safe_for_living_creatures = TRUE
-	/// Maximum force that can be used to extract
-	var/max_force_fulton = MOVE_FORCE_STRONG
+	/// Maximum force that can be used to extract; MOVE_FORCE_EXTREMELY_STRONG allows extraction of most any
+	/// unanchored thing, excluding megafauna or outliers such as the supermatter
+	var/max_force_fulton = MOVE_FORCE_EXTREMELY_STRONG
+	var/attachment_time = 8 SECONDS
 
-/obj/item/extraction_pack/examine()
+/obj/item/extraction_pack/examine(mob/user)
 	. = ..()
 	. += span_infoplain("It has [uses_left] use\s remaining.")
 
@@ -33,16 +36,20 @@ GLOBAL_LIST_EMPTY(total_extraction_beacons)
 	. += span_infoplain("It is linked to [beacon.name].")
 
 /obj/item/extraction_pack/attack_self(mob/user)
+	if(!isnull(beacon_ref))
+		var/obj/structure/extraction_point/beacon = beacon_ref.resolve()
+		if(!isnull(beacon))
+			tgui_alert(user, "Currently linked to [beacon.name].", )
 	var/list/possible_beacons = list()
 	for(var/datum/weakref/point_ref as anything in GLOB.total_extraction_beacons)
 		var/obj/structure/extraction_point/extraction_point = point_ref.resolve()
 		if(isnull(extraction_point))
 			GLOB.total_extraction_beacons.Remove(point_ref)
 			continue
-		if(extraction_point.beacon_network in beacon_networks)
+		if(extraction_point.beacon_network == src.beacon_network)
 			possible_beacons += extraction_point
 	if(!length(possible_beacons))
-		balloon_alert(user, "no beacons")
+		balloon_alert(user, "no beacons on \"[beacon_network]\" network")
 		return
 
 	var/chosen_beacon = tgui_input_list(user, "Beacon to connect to", "Balloon Extraction Pack", sort_names(possible_beacons))
@@ -51,6 +58,25 @@ GLOBAL_LIST_EMPTY(total_extraction_beacons)
 
 	beacon_ref = WEAKREF(chosen_beacon)
 	balloon_alert(user, "linked!")
+
+/obj/item/extraction_pack/multitool_act(mob/user, obj/item/tool)
+	. = ..()
+	var/network_max_length = 32
+	var/new_network = tgui_input_text(
+		user = user,
+		message = "Enter the name of the new beacon network. Changing the network will unlink the pack from its current beacon.",
+		title = "Set New Beacon Network",
+		default = beacon_network,
+		max_length = network_max_length,
+		multiline = FALSE)
+	if(!new_network || new_network == "" || new_network == beacon_network)
+		return NONE
+	var/signal_check = SEND_SIGNAL(src, COMSIG_FULTON_PACK_NETWORK_CHANGED, user, new_network)
+	if(signal_check & COMPONENT_FULTON_BLOCKED_NETWORK_CHANGE)
+		return NONE
+	beacon_network = new_network
+	to_chat(user, span_notice("Beacon network set to [beacon_network]."))
+
 
 /obj/item/extraction_pack/interact_with_atom(atom/interacting_with, mob/living/user, list/modifiers)
 	if(!ismovable(interacting_with))
@@ -86,7 +112,7 @@ GLOBAL_LIST_EMPTY(total_extraction_beacons)
 		if(creature.mind)
 			to_chat(thing, span_userdanger("You are being extracted! Stand still to proceed."))
 
-	if(!do_after(user, 5 SECONDS, target = thing))
+	if(!do_after(user, attachment_time, target = thing))
 		return .
 
 	balloon_alert_to_viewers("extracting!")
@@ -184,12 +210,17 @@ GLOBAL_LIST_EMPTY(total_extraction_beacons)
 	desc = "When built, emits a signal which fulton recovery devices can lock onto. Activate in hand to unfold into a beacon."
 	icon = 'icons/obj/fulton.dmi'
 	icon_state = "folded_extraction"
+	w_class = WEIGHT_CLASS_SMALL
 
 /obj/item/fulton_core/attack_self(mob/user)
 	if(do_after(user, 1.5 SECONDS, target = user) && !QDELETED(src))
 		new /obj/structure/extraction_point(get_turf(user))
 		playsound(src, 'sound/items/deconstruct.ogg', vol = 50, vary = TRUE, extrarange = MEDIUM_RANGE_SOUND_EXTRARANGE)
 		qdel(src)
+
+/obj/item/fulton_core/multitool_act(mob/user, obj/item/tool)
+	. = ..()
+	to_chat(user, span_warning("Deploy it first to configure its beacon network!"))
 
 /obj/structure/extraction_point
 	name = "fulton recovery beacon"
@@ -199,7 +230,20 @@ GLOBAL_LIST_EMPTY(total_extraction_beacons)
 	anchored = TRUE
 	density = FALSE
 	obj_flags = CAN_BE_HIT | UNIQUE_RENAME
-	var/beacon_network = "station"
+	var/beacon_network = "ss13"
+
+/obj/structure/extraction_point/examine(mob/user)
+	. = ..()
+	. += span_notice("You can use a [span_bold("fulton extraction pack")] to extract unanchored objects to this.")
+	. += span_notice("You can use a [span_bold("multitool")] to change the beacon network.")
+	if(get_dist(src, user) <= 3)
+		. += span_notice("Beacon network: [beacon_network]")
+	else
+		. += span_notice("You are too far away to see the beacon network.")
+
+/obj/structure/extraction_point/multitool_act(mob/user, obj/item/tool)
+	. = ..()
+
 
 /obj/structure/extraction_point/Initialize(mapload)
 	. = ..()
@@ -243,6 +287,14 @@ GLOBAL_LIST_EMPTY(total_extraction_beacons)
 /obj/effect/extraction_holder/singularity_pull(atom/singularity, current_size)
 	return
 
-/obj/item/extraction_pack/syndicate
+/obj/item/extraction_pack/bluespace
+	name = "bluespace fulton extraction pack"
+	can_use_indoors = TRUE
+	// Can be researched by the crew, however, it has a much longer extraction time, discouraging their use in chicanery
+	attachment_time = 15 SECONDS
+
+/obj/item/extraction_pack/bluespace/syndicate
 	name = "syndicate fulton extraction pack"
 	can_use_indoors = TRUE
+	// To give ne'er-dowells a reason to actually want to use these
+	attachment_time = 3 SECONDS
