@@ -614,6 +614,7 @@
 		/obj/item/stack/ore/bluespace_crystal,
 		/obj/item/stock_parts,
 		/obj/item/wallframe/camera,
+		/obj/item/stack/sheet,
 	))
 
 /obj/item/storage/bag/harpoon_quiver
