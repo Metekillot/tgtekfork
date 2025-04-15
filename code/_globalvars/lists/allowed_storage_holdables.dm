@@ -1,3 +1,13 @@
+/// An alist of shorthand_name -> list(/types/allowed) for a given
+/// type of suit storage
+GLOBAL_LIST_INIT(suit_storage_allowed, alist(
+	"detective_vest" =
+	"security_vest" =
+	"security_wintercoat" =
+	"mining_suit" =
+	"pillow_suit" =
+))
+
 //Allowed equipment lists for security vests.
 
 GLOBAL_LIST_INIT(detective_vest_allowed, list(
