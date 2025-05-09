@@ -14,6 +14,7 @@
 	var/anyone = FALSE
 	/// Weak ref to the ID card we're currently attempting to steal access from.
 	var/datum/weakref/theft_target
+	var/datum/chameleon_card_forging_interface/forging_interface
 
 /obj/item/card/id/advanced/chameleon/crummy
 	desc = "A surplus version of a chameleon ID card. Can only hold a limited number of access codes."
@@ -219,95 +220,12 @@
 		if("Show")
 			return ..()
 
-	///"Forge/Reset", kept outside the switch() statement to reduce indentation.
-	if(forged) //reset the ID if forged
-		var/datum/chameleon_card_interface/my_interface = new(user, src)
-		registered_name = initial(registered_name)
-		assignment = initial(assignment)
-		SSid_access.remove_trim_override(src)
-		REMOVE_TRAIT(src, TRAIT_MAGNETIC_ID_CARD, CHAMELEON_ITEM_TRAIT)
-		user.log_message("reset \the [initial(name)] named \"[src]\" to default.", LOG_GAME)
-		update_label()
-		update_icon()
-		forged = FALSE
-		to_chat(user, span_notice("You successfully reset the ID card."))
-		return
+	if(isnull(forging_interface))
+		forging_interface = new(user, src)
 
-	///forge the ID if not forged.s
-	var/input_name = tgui_input_text(user, "What name would you like to put on this card? Leave blank to randomise.", "Agent card name", registered_name ? registered_name : (ishuman(user) ? user.real_name : user.name), max_length = MAX_NAME_LEN, encode = FALSE)
+	forging_interface.ui_interact(user)
+	return TRUE
 
-	if(!after_input_check(user))
-		return TRUE
-	if(input_name)
-		input_name = sanitize_name(input_name, allow_numbers = TRUE)
-	if(!input_name)
-		// Invalid/blank names give a randomly generated one.
-		if(user.gender == MALE)
-			input_name = "[pick(GLOB.first_names_male)] [pick(GLOB.last_names)]"
-		else if(user.gender == FEMALE)
-			input_name = "[pick(GLOB.first_names_female)] [pick(GLOB.last_names)]"
-		else
-			input_name = "[pick(GLOB.first_names)] [pick(GLOB.last_names)]"
-
-	var/change_trim = tgui_alert(user, "Adjust the appearance of your card's trim?", "Modify Trim", list("Yes", "No"))
-	if(!after_input_check(user))
-		return TRUE
-	var/selected_trim_path
-	var/static/list/trim_list
-	if(change_trim == "Yes")
-		trim_list = list()
-		for(var/trim_path in typesof(/datum/id_trim))
-			var/datum/id_trim/trim = SSid_access.trim_singletons_by_path[trim_path]
-			if(trim && trim.trim_state && trim.assignment)
-				var/fake_trim_name = "[trim.assignment] ([trim.trim_state])"
-				trim_list[fake_trim_name] = trim_path
-		selected_trim_path = tgui_input_list(user, "Select trim to apply to your card.\nNote: This will not grant any trim accesses.", "Forge Trim", sort_list(trim_list, GLOBAL_PROC_REF(cmp_typepaths_asc)))
-		if(!after_input_check(user))
-			return TRUE
-
-	var/target_occupation = tgui_input_text(user, "What occupation would you like to put on this card?\nNote: This will not grant any access levels.", "Agent card job assignment", assignment ? assignment : "Assistant", max_length = MAX_NAME_LEN)
-	if(!after_input_check(user))
-		return TRUE
-
-	var/new_age = tgui_input_number(user, "Choose the ID's age", "Agent card age", AGE_MIN, AGE_MAX, AGE_MIN)
-	if(!after_input_check(user))
-		return TRUE
-
-	var/wallet_spoofing = tgui_alert(user, "Activate wallet ID spoofing, allowing this card to force itself to occupy the visible ID slot in wallets?", "Wallet ID Spoofing", list("Yes", "No"))
-	if(!after_input_check(user))
-		return
-
-	registered_name = input_name
-	if(selected_trim_path)
-		SSid_access.apply_trim_override(src, trim_list[selected_trim_path])
-	if(target_occupation)
-		assignment = sanitize(target_occupation)
-	if(new_age)
-		registered_age = new_age
-	if(wallet_spoofing  == "Yes")
-		ADD_TRAIT(src, TRAIT_MAGNETIC_ID_CARD, CHAMELEON_ITEM_TRAIT)
-
-	update_label()
-	update_icon()
-	forged = TRUE
-	to_chat(user, span_notice("You successfully forge the ID card."))
-	user.log_message("forged \the [initial(name)] with name \"[registered_name]\", occupation \"[assignment]\" and trim \"[trim?.assignment]\".", LOG_GAME)
-
-	if(!ishuman(user))
-		return
-
-	var/mob/living/carbon/human/owner = user
-	if (!selected_trim_path) // Ensure that even without a trim update, we update user's sechud
-		owner.sec_hud_set_ID()
-
-	if (registered_account)
-		return
-
-	var/datum/bank_account/account = SSeconomy.bank_accounts_by_id["[owner.account_id]"]
-	if(account)
-		account.bank_cards += src
-		registered_account = account
-		to_chat(user, span_notice("Your account number has been automatically assigned."))
 
 /obj/item/card/id/advanced/chameleon/add_item_context(obj/item/source, list/context, atom/target, mob/living/user,)
 	. = ..()
