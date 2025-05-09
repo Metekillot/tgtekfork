@@ -1839,6 +1839,7 @@
 
 	///"Forge/Reset", kept outside the switch() statement to reduce indentation.
 	if(forged) //reset the ID if forged
+		var/datum/chameleon_card_interface/my_interface = new(user, src)
 		registered_name = initial(registered_name)
 		assignment = initial(assignment)
 		SSid_access.remove_trim_override(src)
