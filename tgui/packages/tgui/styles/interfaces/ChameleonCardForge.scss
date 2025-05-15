@@ -1,0 +1,9 @@
+@use 'sass:color';
+
+@use '../base.scss';
+
+.ChameleonCardForge__renderedField {
+  outline: 4px solid #000;
+  outline-style: groove;
+  outline-offset: 6px;
+}

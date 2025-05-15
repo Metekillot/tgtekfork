@@ -8,13 +8,14 @@
 	actions_types = list(/datum/action/item_action/chameleon/change/id, /datum/action/item_action/chameleon/change/id_trim)
 	action_slots = ALL
 
-	/// Have we set a custom name and job assignment, or will we use what we're given when we chameleon change?
 	var/forged = FALSE
 	/// Anti-metagaming protections. If TRUE, anyone can change the ID card's details. If FALSE, only syndicate agents can.
 	var/anyone = FALSE
 	/// Weak ref to the ID card we're currently attempting to steal access from.
 	var/datum/weakref/theft_target
 	var/datum/chameleon_card_forging_interface/forging_interface
+	var/gender_presented
+	var/is_wallet_spoofing = FALSE
 
 /obj/item/card/id/advanced/chameleon/crummy
 	desc = "A surplus version of a chameleon ID card. Can only hold a limited number of access codes."
@@ -23,6 +24,7 @@
 /obj/item/card/id/advanced/chameleon/Initialize(mapload)
 	. = ..()
 	register_item_context()
+	gender_presented = pick(G_MALE, G_FEMALE, G_NEUTER, G_PLURAL)
 
 /obj/item/card/id/advanced/chameleon/Destroy()
 	theft_target = null

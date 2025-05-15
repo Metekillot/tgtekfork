@@ -1,3 +1,5 @@
+GLOBAL_LIST_INIT(mutable_appearance/trim_icon_cache, list())
+
 /**
  * Non-processing subsystem that holds various procs and data structures to manage ID cards, trims and access.
  */
@@ -127,6 +129,36 @@ SUBSYSTEM_DEF(id_access)
 /datum/controller/subsystem/id_access/proc/setup_trim_singletons()
 	for(var/trim in typesof(/datum/id_trim))
 		trim_singletons_by_path[trim] = new trim()
+
+/datum/controller/subsystem/id_access/proc/setup_trim_icon_cache()
+	for(var/datum/id_trim/trim as anything in trim_singletons_by_path)
+
+/datum/controller/subsystem/id_access/proc/generate_trim_icon_state(datum/id_trim/trim)
+	. = ..()
+
+	if(registered_name && registered_name != "Captain")
+		. += mutable_appearance(icon, assigned_icon_state)
+
+	var/trim_icon_file = trim_icon_override ? trim_icon_override : trim?.trim_icon
+	var/trim_icon_state = trim_state_override ? trim_state_override : trim?.trim_state
+	var/trim_department_color = department_color_override ? department_color_override : trim?.department_color
+	var/trim_department_state = department_state_override ? department_state_override : trim?.department_state
+	var/trim_subdepartment_color = subdepartment_color_override ? subdepartment_color_override : trim?.subdepartment_color
+
+	if(!trim_icon_file || !trim_icon_state || !trim_department_color || !trim_subdepartment_color || !trim_department_state)
+		return
+
+	/// We handle department and subdepartment overlays first, so the job icon is always on top.
+	var/mutable_appearance/department_overlay = mutable_appearance(trim_icon_file, trim_department_state)
+	department_overlay.color = trim_department_color
+	. += department_overlay
+
+	var/mutable_appearance/subdepartment_overlay = mutable_appearance(trim_icon_file, "subdepartment")
+	subdepartment_overlay.color = trim_subdepartment_color
+	. += subdepartment_overlay
+
+	/// Then we handle the job's icon here.
+	. += mutable_appearance(trim_icon_file, trim_icon_state)
 
 /// Creates various data structures that primarily get fed to tgui interfaces, although these lists are used in other places.
 /datum/controller/subsystem/id_access/proc/setup_tgui_lists()
