@@ -1,3 +1,17 @@
+/obj/machinery/new_holopad
+	name = "holopad by Metekillot"
+	desc = "It's a floor-mounted device for projecting holographic images except it only exists for us to be lazy on defining stuff."
+	icon = 'icons/obj/machines/floor.dmi'
+	icon_state = "holopad0"
+	base_icon_state = "holopad"
+	/// The plane is set such that it shows up without being covered by pipes/wires in a map editor, we change this on initialize.
+	layer = MAP_SWITCH(ABOVE_OPEN_TURF_LAYER, LOW_OBJ_LAYER)
+	plane = MAP_SWITCH(FLOOR_PLANE, GAME_PLANE)
+
+/obj/machinery/new_holopad/Initialize(mapload)
+	. = ..()
+	AddComponent(/datum/component/holonetwork_interface)
+
 #define CAN_HEAR_MASTERS (1<<0)
 #define CAN_HEAR_ACTIVE_HOLOCALLS (1<<1)
 #define CAN_HEAR_RECORD_MODE (1<<2)
