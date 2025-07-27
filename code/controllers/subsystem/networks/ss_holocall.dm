@@ -18,9 +18,9 @@ SUBSYSTEM_DEF(holocall)
 		/datum/controller/subsystem/mapping,
 	)
 	var/list/holo_networks = list(
-		"Space Station 13" = alist(),
-		"Centcom" = alist(),
-		"Syndicate" = alist(),
+		"Space Station 13" = list(),
+		"Centcom" = list(),
+		"Syndicate" = list(),
 	)
 	var/list/static_network_keys = list("Space Station 13")
 	var/list/private_network_keys = list("Syndicate", "Centcom")
@@ -36,19 +36,38 @@ SUBSYSTEM_DEF(holocall)
 			log_runtime("A network list under key [network] wasn't actually a list.")
 			holo_networks.Remove(network)
 			continue
-		for(var/tag in network)
-			var/datum/component/holonetwork_interface/interface = network[tag]
+		for(var/callsign in network)
+			var/datum/component/holonetwork_interface/interface = network[callsign]
 			if(isnull(interface))
-				log_runtime("A holonetwork interface associated to [tag] was missing.")
-				network.Remove(tag)
+				log_runtime("A holonetwork interface associated to [callsign] was missing.")
+				network.Remove(callsign)
 				continue
 			if(!istype(interface.physical_interface))
 				var/data = list()
 				data[tag] = interface
 				for(var/if_var in interface.vars)
 					data["[if_var]"] = interface.vars[if_var]
-				log_runtime("A holonetwork interface for [tag] resolved, but it had an invalid .physical_interface.", data)
-				network.Remove(tag)
-				qdel(tag)
+				log_runtime("A holonetwork interface for [callsign] resolved, but it had an invalid .physical_interface.", data)
+				network.Remove(callsign)
+				qdel(callsign)
 				continue
 	return SS_INIT_SUCCESS
+
+/datum/controller/subsystem/holocall/proc/make_callsign(datum/component/holonetwork_interface/tracked)
+	if(tracked.physical_interface.anchored)
+		var/area/area = get_area(tracked.physical_interface)
+		. = area.name
+	else
+		. = tracked.physical_interface.name
+	. = splittext(., " ")
+	var/list/to_join = list()
+	for(var/text in .)
+		to_join += uppertext(copytext(text, 1, 4))
+	. = jointext(to_join, "_")
+
+
+/datum/controller/subsystem/holocall/proc/track(datum/component/holonetwork_interface/tracked)
+	if(is_station_level(tracked.physical_interface.z))
+		if(!isnull(holo_networks["Space Station 13"][tracked.callsign]))
+			tracked.callsign = "[tracked.callsign]_2"
+		holo_networks["Space Station 13"][tracked.callsign] = tracked

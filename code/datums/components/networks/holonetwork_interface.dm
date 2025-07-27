@@ -5,7 +5,8 @@
 	var/mob/eye/camera/remote/holo/eye
 	///user's hologram, once connected
 	var/obj/effect/overlay/holo_pad_hologram/hologram
-	var/datum/holonet_request/list/waiting = list()
+	var/list/datum/holonet_request/waiting = list()
+	var/callsign
 
 /datum/component/holonetwork_interface/Initialize()
 	var/failure_to_attach = TRUE
@@ -17,6 +18,8 @@
 	if(failure_to_attach)
 		return COMPONENT_INCOMPATIBLE
 	physical_interface = parent
+	callsign = SSholocall.make_callsign(src)
+	SSholocall.track(src)
 
 /datum/component/holonetwork_interface/RegisterWithParent()
 	RegisterSignals(parent, list(
@@ -62,3 +65,8 @@
 	if(!ui)
 		ui = new(user, src, "HolonetworkInterface", physical_interface.name)
 		ui.open()
+
+/datum/component/holonetwork_interface/ui_data(mob/user)
+	var/list/data = list()
+	data["available_interfaces"] = is_station_level(physical_interface.z) ? SSholocall.holo_networks["Space Station 13"] : null
+	return data
