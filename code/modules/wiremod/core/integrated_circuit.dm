@@ -27,6 +27,9 @@ GLOBAL_LIST_EMPTY_TYPED(integrated_circuits, /obj/item/integrated_circuit)
 	/// The power of the integrated circuit
 	var/obj/item/stock_parts/power_store/cell
 
+	/// The cell that a given type spawns with
+	var/obj/item/stock_parts/power_store/cell_type = /obj/item/stock_parts/power_store/cell
+
 	/// The shell that this circuitboard is attached to. Used by components.
 	var/atom/movable/shell
 
@@ -90,16 +93,16 @@ GLOBAL_LIST_EMPTY_TYPED(integrated_circuits, /obj/item/integrated_circuit)
 	/// The current linked component printer. Lets you remotely print off circuit components and places them in the integrated circuit.
 	var/datum/weakref/linked_component_printer
 
+/obj/item/integrated_circuit/loaded
+	cell_type = /obj/item/stock_parts/power_store/cell/high
+
 /obj/item/integrated_circuit/Initialize(mapload)
 	. = ..()
 
 	GLOB.integrated_circuits += src
 
 	RegisterSignal(src, COMSIG_ATOM_USB_CABLE_TRY_ATTACH, PROC_REF(on_atom_usb_cable_try_attach))
-
-/obj/item/integrated_circuit/loaded/Initialize(mapload)
-	. = ..()
-	set_cell(new /obj/item/stock_parts/power_store/cell/high(src))
+	set_cell(new cell_type(src))
 
 /obj/item/integrated_circuit/Destroy()
 	for(var/obj/item/circuit_component/to_delete in attached_components)
