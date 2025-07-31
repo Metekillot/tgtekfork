@@ -22,7 +22,11 @@ SUBSYSTEM_DEF(holocall)
 		"Centcom" = list(),
 		"Syndicate" = list(),
 	)
-	var/list/static_network_keys = list("Space Station 13")
+	var/list/static_network_keys = list(
+		"Space Station 13",
+		"Centcom",
+		"Syndicate",
+		)
 	var/list/private_network_keys = list("Syndicate", "Centcom")
 	var/list/valid_interfaces = list(
 		/obj/machinery/holopad,
