@@ -85,3 +85,4 @@ SUBSYSTEM_DEF(holocall)
 		if(!isnull(holo_networks["Space Station 13"][tracked.callsign]))
 			tracked.callsign = "[tracked.callsign]_2"
 		holo_networks["Space Station 13"][tracked.callsign] = tracked
+		tracked.current_network = "Space Station 13"

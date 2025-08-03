@@ -2,11 +2,13 @@
 	var/obj/physical_interface
 	var/datum/holonet_connection/current_call = null
 	///user's eye, once connected
-	var/mob/eye/camera/remote/holo/eye
-	///user's hologram, once connected
-	var/obj/effect/overlay/holo_pad_hologram/hologram
 	var/list/datum/holonet_request/waiting = list()
 	var/callsign
+	var/current_network
+	var/mob/eye/camera/remote/eye
+	///user's hologram, once connected
+	var/obj/effect/overlay/holo_pad_hologram/hologram
+	var/mob/living/current_user
 
 /datum/component/holonetwork_interface/Initialize()
 	var/failure_to_attach = TRUE
@@ -48,17 +50,38 @@
 	SIGNAL_HANDLER
 	if(current_call)
 		. = COMPONENT_HOLOREQUEST_BUSY
-		waiting += request
 	else
 		. = COMPONENT_HOLOREQUEST_RECEIVED
-	physical_interface.say("Incoming call from [request.connecting_from.physical_interface.name]")
+	waiting += request
+	physical_interface.say("Incoming call from [request.connecting_from.callsign]")
+
+/datum/component/holonetwork_interface/proc/accept_request(datum/holonet_request/accepted)
+	var/datum/holonet_connection/connected = new(host_interface = src, participants = accepted.participants)
+	waiting -= accepted
+	qdel(accepted)
 
 /datum/component/holonetwork_interface/proc/display_ui(datum/source, mob/user)
 	SIGNAL_HANDLER
 	// Most will be subtyped under /mob/living, but if not, the null return will still satisfy
 	if(!(astype(user, /mob/living)?.combat_mode))
 		INVOKE_ASYNC(src, TYPE_PROC_REF(/datum, ui_interact), user)
+		if(isliving(user))
+			current_user = user
 		return COMPONENT_CANCEL_ATTACK_CHAIN
+
+/datum/component/holonetwork_interface/proc/connect_to(datum/component/holonetwork_interface/host_interface, datum/holonet_connection/current_call)
+	if(src.current_call && src.current_call != current_call)
+		//disconnect_call(src.current_call)
+		return
+	src.current_call = current_call
+	if(current_user)
+		project_to(host_interface)
+
+/datum/component/holonetwork_interface/proc/project_to(datum/component/holonetwork_interface/host_interface)
+	if(!current_user)
+		return
+	eye = new(physical_interface)
+	eye.assign_user(current_user)
 
 /datum/component/holonetwork_interface/ui_interact(mob/user, datum/tgui/ui)
 	ui = SStgui.try_update_ui(user, src, ui)
@@ -69,4 +92,23 @@
 /datum/component/holonetwork_interface/ui_data(mob/user)
 	var/list/data = list()
 	data["available_interfaces"] = is_station_level(physical_interface.z) ? SSholocall.holo_networks["Space Station 13"] : null
+	data["waiting"] = waiting
 	return data
+
+/datum/component/holonetwork_interface/ui_act(action, list/params, datum/tgui/ui, datum/ui_state/state)
+	. = ..()
+	if(.)
+		return
+
+	switch(action)
+		if("send_call_request")
+			send_call_request(usr, params["target"])
+			return TRUE
+
+/datum/component/holonetwork_interface/proc/send_call_request(mob/living/user, target_name)
+	var/datum/component/holonetwork_interface/target = SSholocall.holo_networks[current_network][target_name]
+	if(!target)
+		physical_interface.say("Call attempt failed: couldn't find destination interface")
+		return
+	physical_interface.say("Contact made, prompting destination for call connection")
+	. = new /datum/holonet_request(connecting_from = src, connecting_to = target, participants = list(src))
