@@ -58,15 +58,25 @@ SUBSYSTEM_DEF(holocall)
 	return SS_INIT_SUCCESS
 
 /datum/controller/subsystem/holocall/proc/make_callsign(datum/component/holonetwork_interface/tracked)
+	//Some BYOND text macros cause area and item names to give funky
+	//characters in tgui output so we clean it to what we need with
+	//this regex
+	var/regex/regex = regex(@"([a-z]|[0-9]| )+", "i")
 	if(tracked.physical_interface.anchored)
 		var/area/area = get_area(tracked.physical_interface)
 		. = area.name
 	else
 		. = tracked.physical_interface.name
+	regex.Find(.)
+	. = regex.match
+	if(!.)
+		CRASH("Wasn't able to create a callsign for [tracked.physical_interface]: No characters returned from its name")
 	. = splittext(., " ")
 	var/list/to_join = list()
+	// Render auto-generated names with clunky trunctuation for anti-style
 	for(var/text in .)
-		to_join += uppertext(copytext(text, 1, 4))
+		var/parts = copytext(text, 1, 7)
+		to_join += uppertext(parts)
 	. = jointext(to_join, "_")
 
 
