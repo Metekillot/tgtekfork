@@ -5,7 +5,7 @@
 	var/list/datum/holonet_request/waiting = list()
 	var/callsign
 	var/current_network
-	var/mob/eye/camera/remote/eye
+	var/mob/eye/holonet_projection/eye
 	///user's hologram, once connected
 	var/obj/effect/overlay/holo_pad_hologram/hologram
 	var/mob/living/current_user
@@ -56,7 +56,7 @@
 	physical_interface.say("Incoming call from [request.connecting_from.callsign]")
 
 /datum/component/holonetwork_interface/proc/accept_request(datum/holonet_request/accepted)
-	var/datum/holonet_connection/connected = new(host_interface = src, participants = accepted.participants)
+	. = new /datum/holonet_connection(host_interface = src, participants = accepted.participants)
 	waiting -= accepted
 	qdel(accepted)
 
@@ -80,8 +80,7 @@
 /datum/component/holonetwork_interface/proc/project_to(datum/component/holonetwork_interface/host_interface)
 	if(!current_user)
 		return
-	eye = new(physical_interface)
-	eye.assign_user(current_user)
+	eye = new(get_turf(host_interface.physical_interface), host_interface.physical_interface, current_user)
 
 /datum/component/holonetwork_interface/ui_interact(mob/user, datum/tgui/ui)
 	ui = SStgui.try_update_ui(user, src, ui)
@@ -92,17 +91,28 @@
 /datum/component/holonetwork_interface/ui_data(mob/user)
 	var/list/data = list()
 	data["available_interfaces"] = is_station_level(physical_interface.z) ? SSholocall.holo_networks["Space Station 13"] : null
-	data["waiting"] = waiting
+	data["waiting"] = list()
+	for(var/datum/holonet_request/request as anything in waiting)
+		var/list/participant_callsigns = list()
+		for(var/datum/component/holonetwork_interface/participant as anything in request.participants)
+			participant_callsigns += participant.callsign
+		data["waiting"] += list(
+			list(
+				"connecting_from_callsign" = request.connecting_from.callsign,
+		 		"connecting_from_ref" = REF(request),
+				"participant_callsigns" = participant_callsigns))
 	return data
 
 /datum/component/holonetwork_interface/ui_act(action, list/params, datum/tgui/ui, datum/ui_state/state)
 	. = ..()
 	if(.)
 		return
-
 	switch(action)
 		if("send_call_request")
 			send_call_request(usr, params["target"])
+			return TRUE
+		if("accept_request")
+			accept_request(locate(params["accepted"]))
 			return TRUE
 
 /datum/component/holonetwork_interface/proc/send_call_request(mob/living/user, target_name)

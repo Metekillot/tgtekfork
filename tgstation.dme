@@ -1373,6 +1373,7 @@
 #include "code\datums\components\material\material_container.dm"
 #include "code\datums\components\networks\holonet_call.dm"
 #include "code\datums\components\material\remote_materials.dm"
+#include "code\datums\components\networks\holonet_projection.dm"
 #include "code\datums\components\networks\holonetwork_interface.dm"
 #include "code\datums\components\pet_commands\fetch.dm"
 #include "code\datums\components\pet_commands\obeys_commands.dm"

@@ -77,7 +77,7 @@ SUBSYSTEM_DEF(holocall)
 	for(var/text in .)
 		var/parts = copytext(text, 1, 7)
 		to_join += uppertext(parts)
-	. = jointext(to_join, "_")
+	. = jointext(to_join, ".")
 
 
 /datum/controller/subsystem/holocall/proc/track(datum/component/holonetwork_interface/tracked)

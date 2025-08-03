@@ -3,8 +3,9 @@ import { useBackend } from '../backend';
 import { Window } from '../layouts';
 
 type WaitingRequestData = {
-  connecting_from: string;
-  participants: string[];
+  connecting_from_callsign: string;
+  connecting_from_ref: string;
+  participant_callsigns: string[];
 };
 
 type HolonetIFData = {
@@ -13,15 +14,15 @@ type HolonetIFData = {
 };
 
 const CallWaitingScreen = (props: WaitingRequestData[]) => {
-  const { act } = useBackend<HolonetIFData>();
+  const { act, data } = useBackend<HolonetIFData>();
 
   return (
     <Section align="center" title="Calls Waiting">
       <Stack vertical>
         {Object.keys(props).map((call_waiting) => (
-          <Stack.Item key={props[call_waiting].connecting_from}>
-            <Section title={props[call_waiting].connecting_from}>
-              <Button color="good">Answer</Button>
+          <Stack.Item key={props[call_waiting].connecting_from_callsign}>
+            <Section title={props[call_waiting].connecting_from_callsign}>
+              <Button onClick={() => act('accept_request', {accepted: props[call_waiting].connecting_from_ref})} color="good">Answer</Button>
               <Button color="bad">Reject</Button>
             </Section>
           </Stack.Item>
