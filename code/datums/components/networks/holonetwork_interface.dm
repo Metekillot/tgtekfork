@@ -1,11 +1,11 @@
 /datum/component/holonetwork_interface
 	var/obj/physical_interface
 	var/datum/holonet_connection/current_call = null
-	///user's eye, once connected
 	var/list/datum/holonet_request/waiting = list()
 	var/callsign
 	var/current_network
-	var/mob/eye/holonet_projection/eye
+	///user's eye, once connected
+	var/mob/eye/camera/remote/holonet_projection/eye
 	///user's hologram, once connected
 	var/obj/effect/overlay/holo_pad_hologram/hologram
 	var/mob/living/current_user
@@ -60,10 +60,10 @@
 	waiting -= accepted
 	qdel(accepted)
 
-/datum/component/holonetwork_interface/proc/display_ui(datum/source, mob/user)
+/datum/component/holonetwork_interface/proc/display_ui(datum/source, mob/user, always_display = FALSE)
 	SIGNAL_HANDLER
 	// Most will be subtyped under /mob/living, but if not, the null return will still satisfy
-	if(!(astype(user, /mob/living)?.combat_mode))
+	if(always_display || !(astype(user, /mob/living)?.combat_mode))
 		INVOKE_ASYNC(src, TYPE_PROC_REF(/datum, ui_interact), user)
 		if(isliving(user))
 			current_user = user
