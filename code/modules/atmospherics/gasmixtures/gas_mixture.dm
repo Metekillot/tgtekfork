@@ -367,8 +367,7 @@ GLOBAL_LIST_INIT(gaslist_cache, init_gaslist_cache())
 	for(var/id in only_in_cached) //create gases not in the sharing mix
 		ADD_GAS(id, sharer_gases)
 
-	for(var/id in cached_gases) //transfer gases
-		var/gas = cached_gases[id]
+	for(var/id,gas in cached_gases) //transfer gases
 		var/sharergas = sharer_gases[id]
 		var/delta = QUANTIZE(gas[ARCHIVE] - sharergas[ARCHIVE]) //the amount of gas that gets moved between the mixtures
 
@@ -521,10 +520,10 @@ GLOBAL_LIST_INIT(gaslist_cache, init_gaslist_cache())
 			if((reqs["MIN_TEMP"] && temp < reqs["MIN_TEMP"]) || (reqs["MAX_TEMP"] && temp > reqs["MAX_TEMP"]))
 				continue
 
-			for(var/id in reqs)
+			for(var/id,less_than_threshold in reqs)
 				if (id == "MIN_TEMP" || id == "MAX_TEMP")
 					continue
-				if(!cached_gases[id] || cached_gases[id][MOLES] < reqs[id])
+				if(!cached_gases[id] || cached_gases[id][MOLES] < less_than_threshold)
 					continue reaction_loop
 
 			//at this point, all requirements for the reaction are satisfied. we can now react()
