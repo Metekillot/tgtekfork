@@ -131,6 +131,12 @@
 	if(amount > 0)
 		. = take_overall_damage(brute = amount, updating_health = updating_health, forced = forced, required_bodytype = required_bodytype)
 	else
+		if(istype(caller.src, /datum/reagent))
+			var/list/amount_cocoon = list(amount)
+			SEND_SIGNAL(src, COMSIG_CARBON_HEALED_BY_REAGENT, caller.src, amount_cocoon)
+			amount = amount_cocoon[1]
+			if(!amount)
+				return 0
 		. = heal_overall_damage(brute = abs(amount), required_bodytype = required_bodytype, updating_health = updating_health, forced = forced)
 
 /mob/living/carbon/setBruteLoss(amount, updating_health = TRUE, forced = FALSE, required_bodytype)

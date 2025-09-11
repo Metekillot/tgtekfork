@@ -1,6 +1,8 @@
 #define LIVER_DEFAULT_TOX_TOLERANCE 3 //amount of toxins the liver can filter out
 #define LIVER_DEFAULT_TOX_RESISTANCE 1 //lower values lower how harmful toxins are to the liver
 #define LIVER_FAILURE_STAGE_SECONDS 60 //amount of seconds before liver failure reaches a new stage
+#define LIVER_HEALTH_STRESS_MAX 100 //maximum liver health stress, caused by pushing your body's healing into overdrive with SUBSTANCES
+#define LIVER_HEALTH_STRESS_RECOVERY_BASE 0.1 //how quickly your liver health stress ticks down, dependent on liver type and health-affecting activities
 
 /obj/item/organ/liver
 	name = "liver"
@@ -30,6 +32,14 @@
 	var/liver_resistance = LIVER_DEFAULT_TOX_RESISTANCE
 	var/filterToxins = TRUE //whether to filter toxins
 	var/operated = FALSE //whether the liver's been repaired with surgery and can be fixed again or not
+	/// From 1-10, how taxed your liver is from healing you; overtaxing your liver with mad chemical science is not healthy!
+	var/stress_from_healing = 0
+	/// How much healing stress you recover each life tick; don't neglect your health! Depends on liver type
+	var/healing_stress_recovery_rate = LIVER_HEALTH_STRESS_RECOVERY_BASE
+	/// Alist of any goddamn thing you want and its additive numerical influence on healing_stress_recovery_rate
+	/// Please keep it in terms of (x * LIVER_HEALTH_STRESS_RECOVERY_BASE)
+	var/alist/health_factors = alist()
+	var/damaged_by_excess_stress = TRUE
 
 /obj/item/organ/liver/Initialize(mapload)
 	. = ..()
@@ -37,6 +47,7 @@
 	// Don't think about it too much.
 	RegisterSignal(src, SIGNAL_ADDTRAIT(TRAIT_COMEDY_METABOLISM), PROC_REF(on_add_comedy_metabolism))
 	RegisterSignal(src, SIGNAL_REMOVETRAIT(TRAIT_COMEDY_METABOLISM), PROC_REF(on_remove_comedy_metabolism))
+	RegisterSignal(src, COMSIG_BIOLOGICAL_INFLUENCE_LIVER_RECOVERY, PROC_REF(biologically_influence_stress_recovery))
 
 /* Signal handler for the liver gaining the TRAIT_COMEDY_METABOLISM trait
  *
@@ -67,6 +78,8 @@
 	. = ..()
 	RegisterSignal(organ_owner, COMSIG_MOB_REAGENT_TICK, PROC_REF(handle_chemical))
 	RegisterSignal(organ_owner, COMSIG_ATOM_EXAMINE, PROC_REF(on_owner_examine))
+	RegisterSignal(organ_owner, COMSIG_CARBON_HEALED_BY_REAGENT, PROC_REF(on_reagent_healing))
+	RegisterSignal(organ_owner, COMSIG_LIVER_)
 
 /obj/item/organ/liver/on_mob_remove(mob/living/carbon/organ_owner, special, movement_flags)
 	. = ..()
@@ -135,6 +148,49 @@
 		return
 
 	owner.reagents?.metabolize(owner, seconds_per_tick, times_fired, can_overdose = TRUE)
+	stress_from_healing &&= (stress_from_healing - healing_stress_recovery_rate)
+
+
+/obj/item/organ/liver/proc/on_reagent_healing(datum/source, datum/reagent/healing_reagent, list/amount_cocoon)
+	SIGNAL_HANDLER
+
+	// eat your fucking vegetables
+	if(SEND_SIGNAL(healing_reagent, COMSIG_LIVER_REAGENT_HEAL_STRESS, src, owner) & COMPONENT_LIVER_FRIENDLY_REAGENT)
+		return NONE
+	var/amount = amount_cocoon[1]
+	
+	var/healing_stress_applied = amount/3
+	// Healing stress from any given reagent source will be static based on the amount healed
+	stress_from_healing = min(100, stress_from_healing + healing_stress_applied) // 0.3 healing stress per tick from libital, for example
+	if(stress_from_healing == LIVER_HEALTH_STRESS_MAX)
+		amount_cocoon[1] = 0
+		if(damaged_by_excess_stress)
+			apply_organ_damage(healing_stress_applied) //those potions were too strong for you, traveler
+		return COMPONENT_LIVER_MAX_HEALTH_STRESS
+	// gets lowered by the percentage of liver stress you have, 50 liver stress = 50% less healing
+	amount = amount - (amount  * (stress_from_healing/100))
+	// gets lowered again if you have liver damage, drink responsibly
+	amount = amount - (amount * damage/maxhealth)
+	amount_cocoon[1] = amount
+	return COMPONENT_LIVER_RECEIVED_HEALTH_STRESS
+
+/obj/item/organ/liver/proc/biologically_influence_liver_stress_recovery(datum/source, source_of_influence, stress_recovery_influence_amount)
+	SIGNAL_HANDLER
+
+	if(health_factors[source_of_influence])
+		healing_stress_recovery_rate = max(0, healing_stress_recovery_rate - health_factors[source_of_influence])
+		if(stress_recovery_influence_amount)
+			healing_stress_recovery_rate = max(0, healing_stress_recovery_rate + stress_recovery_influence_amount)
+			health_factors[source_of_influence] = stress_recovery_influence_amount
+		else
+			health_factors -= source_of_influence
+		return
+
+	if(!stress_recovery_influence_amount)
+		CRASH("[source_of_influence] tried to modify liver health stress recovery by 0, what a senseless waste of CPU cycles.")
+	healing_stress_recovery_rate = max(0, healing_stress_recovery_rate + stress_recovery_influence_amount)
+	health_factors[source_of_influence] = stress_recovery_influence_amount
+
 
 /obj/item/organ/liver/handle_failing_organs(seconds_per_tick)
 	if(HAS_TRAIT(owner, TRAIT_STABLELIVER) || HAS_TRAIT(owner, TRAIT_LIVERLESS_METABOLISM))
@@ -241,6 +297,7 @@
 	toxTolerance = 2
 	liver_resistance = 0.9 * LIVER_DEFAULT_TOX_RESISTANCE // -10%
 	var/emp_vulnerability = 80 //Chance of permanent effects if emp-ed.
+	healing_stress_recovery_rate = LIVER_HEALTH_STRESS_RECOVERY_BASE - (LIVER_HEALTH_STRESS_RECOVERY_BASE/3)
 
 /obj/item/organ/liver/cybernetic/emp_act(severity)
 	. = ..()
@@ -260,6 +317,8 @@
 	toxTolerance = 5 //can shrug off up to 5u of toxins
 	liver_resistance = 1.2 * LIVER_DEFAULT_TOX_RESISTANCE // +20%
 	emp_vulnerability = 40
+	damaged_by_excess_stress = FALSE
+	healing_stress_recovery_rate = LIVER_HEALTH_STRESS_RECOVERY_BASE * 2
 
 /obj/item/organ/liver/cybernetic/tier3
 	name = "upgraded cybernetic liver"
@@ -270,6 +329,9 @@
 	toxTolerance = 10 //can shrug off up to 10u of toxins
 	liver_resistance = 1.5 * LIVER_DEFAULT_TOX_RESISTANCE // +50%
 	emp_vulnerability = 20
+	damaged_by_excess_stress = FALSE
+	healing_stress_recovery_rate = LIVER_HEALTH_STRESS_RECOVERY_BASE * 4
+
 
 /obj/item/organ/liver/cybernetic/surplus
 	name = "surplus prosthetic liver"
@@ -283,6 +345,7 @@
 	toxTolerance = 1 //basically can't shrug off any toxins
 	liver_resistance = 0.75 * LIVER_DEFAULT_TOX_RESISTANCE // -25%
 	emp_vulnerability = 100
+	healing_stress_recovery_rate = LIVER_HEALTH_STRESS_RECOVERY_BASE - (LIVER_HEALTH_STRESS_RECOVERY_BASE/1.1)
 
 //surplus organs are so awful that they explode when removed, unless failing
 /obj/item/organ/liver/cybernetic/surplus/Initialize(mapload)
